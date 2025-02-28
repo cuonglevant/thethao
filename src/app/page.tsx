@@ -1,361 +1,434 @@
-import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
+import { Send, User, UserPlus, Home } from "lucide-react";
+import { MainNav } from "@/components/main-nav";
 
-export default function Home() {
+export default function Thethao247() {
   return (
-    <div>
-      <Head>
-        <title>Thể thao 247</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-      <header>
-        <div className="container">
-          <div className="top-header relative p-10-0">
-            <div className="d-flex">
-              <div className="logo relative">
-                <Link href="/" title="Thể thao 247">
-                  <Image
-                    src="https://thethao247.vn/frontend/images/logo2022.svg"
-                    alt="Thể thao 247"
-                    width={282}
-                    height={73}
-                  />
-                </Link>
-              </div>
-              <div className="logo-event"></div>
-            </div>
-            <div className="logo-mobile" style={{ height: "30px" }}></div>
-            <div
-              className="submenu_social relative"
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: "7px",
-              }}
+    <div className="min-h-screen bg-gray-100">
+      {/* Header */}
+      <header className="bg-white border-b">
+        <div className="container mx-auto px-4 py-2 flex items-center justify-between w-7/12">
+          <Link href="/" title="Thể thao 247">
+            <Image
+              src="https://thethao247.vn/frontend/images/logo2022.svg"
+              alt="Thể thao 247"
+              width={282}
+              height={73}
+            />
+          </Link>
+          <div className="flex items-center space-x-4">
+            <Link
+              href="/quang-cao"
+              className="flex items-center text-gray-600 hover:text-blue-700"
             >
-              <ul className="submenu" style={{ borderRight: 0 }}>
-                <li>
-                  <Link href="/bao-gia.html" title="Quảng cáo" rel="nofollow">
-                    <i className="icon-ads"></i>
-                    Quảng cáo
-                  </Link>
-                </li>
-              </ul>
-              <div className="login-box"></div>
-            </div>
+              <div className="w-5 h-5 rounded-full bg-red-500 flex items-center justify-center mr-2">
+                <span className="text-white text-xs">●</span>
+              </div>
+              <span className="text-sm font-medium">QUẢNG CÁO</span>
+            </Link>
+            <Link
+              href="/gui-bai"
+              className="flex items-center text-gray-600 hover:text-blue-700"
+            >
+              <Send size={16} className="mr-2 text-blue-600" />
+              <span className="text-sm font-medium">Gửi bài</span>
+            </Link>
+            <button className="flex items-center px-3 py-1 border border-blue-600 text-blue-600 rounded hover:bg-blue-50">
+              <User size={16} className="mr-2" />
+              <span className="text-sm font-medium">Đăng nhập</span>
+            </button>
+            <button className="flex items-center px-3 py-1 border border-blue-600 text-blue-600 rounded hover:bg-blue-50">
+              <UserPlus size={16} className="mr-2" />
+              <span className="text-sm font-medium">Đăng ký</span>
+            </button>
           </div>
         </div>
-        <nav className="navigation">
-          <div className="main_nav is_desktop">
-            <div className="container">
-              <ul className="nav_content">
-                <li>
-                  <Link
-                    href="/"
-                    title="Trang chủ Thể Thao 247"
-                    className="home-icon"
-                  >
-                    <i className="fa fa-home" aria-hidden="true"></i>
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/lich-thi-dau-bong-da/" title="Lịch thi đấu">
-                    #Lịch thi đấu
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="https://thethao247.vn/bong-da-viet-nam-c1/"
-                    title="Bóng đá Việt Nam"
-                  >
-                    #Bóng đá Việt Nam
-                  </Link>
-                  <div className="cate-child bg-2">
-                    <div className="container">
-                      <nav>
-                        <Link
-                          href="https://thethao247.vn/v-league-c15/"
-                          title="V-League"
-                        >
-                          #V-League
-                        </Link>
-                        <Link
-                          href="https://thethao247.vn/tuyen-quoc-gia-vn-c19/"
-                          title="Đội tuyển Quốc gia"
-                        >
-                          #Đội tuyển Quốc gia
-                        </Link>
-                        <Link
-                          href="https://thethao247.vn/bong-da-nu-viet-nam-c20/"
-                          title="Bóng Đá Nữ"
-                        >
-                          #Bóng Đá Nữ
-                        </Link>
-                        <Link
-                          href="https://thethao247.vn/u23-asian-cup"
-                          title="U23 Châu Á"
-                        >
-                          #U23 Châu Á
-                        </Link>
-                        <Link
-                          href="https://thethao247.vn/bong-da-tre-c329/"
-                          title="Bóng đá trẻ"
-                        >
-                          #Bóng đá trẻ
-                        </Link>
-                        <Link
-                          href="https://thethao247.vn/u20-chau-a-c321/"
-                          title="U20 Châu Á"
-                        >
-                          #U20 Châu Á
-                        </Link>
-                        <Link
-                          href="https://thethao247.vn/aff-cup"
-                          title="AFF CUP"
-                        >
-                          #AFF CUP
-                        </Link>
-                      </nav>
-                    </div>
+      </header>
+
+      {/* Main Navigation */}
+      <nav className="bg-[#1a3b7d] text-white py-2">
+        <div className="container mx-auto px-4 w-7/12">
+          <div className="flex items-center justify-between space-x-3">
+            <div className=" flex items-center space-x-1 overflow-x-auto scrollbar-hide">
+              <Link
+                href="/"
+                className="flex items-center hover:bg-blue-800 px-2 py-1 rounded"
+              >
+                <Home size={16} className="mr-1" />
+              </Link>
+              {[
+                "LỊCH THI ĐẤU",
+                "BÓNG ĐÁ VIỆT NAM",
+                "NGOẠI HẠNG ANH",
+                "BÓNG ĐÁ QUỐC TẾ",
+                "NHẬN ĐỊNH",
+                "CÚP C1",
+                "CHUYỂN NHƯỢNG",
+                "THỂ THAO",
+                "ESPORTS",
+                "XE",
+                "XU HƯỚNG",
+              ].map((item) => (
+                <Link
+                  key={item}
+                  href={`/${item.toLowerCase().replace(/ /g, "-")}`}
+                  className="whitespace-nowrap hover:bg-blue-800 px-2 py-1 rounded text-sm"
+                >
+                  #{item}
+                </Link>
+              ))}
+            </div>
+            <MainNav />
+          </div>
+        </div>
+      </nav>
+
+      {/* Team Navigation */}
+      <div className="bg-white py-2 border-b">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-center space-x-8 overflow-x-auto scrollbar-hide">
+            {[
+              { name: "MU", logo: "/placeholder.svg?height=24&width=24" },
+              {
+                name: "Liverpool",
+                logo: "/placeholder.svg?height=24&width=24",
+              },
+              { name: "Arsenal", logo: "/placeholder.svg?height=24&width=24" },
+              { name: "Man City", logo: "/placeholder.svg?height=24&width=24" },
+              { name: "Chelsea", logo: "/placeholder.svg?height=24&width=24" },
+              {
+                name: "Barcelona",
+                logo: "/placeholder.svg?height=24&width=24",
+              },
+              {
+                name: "Real Madrid",
+                logo: "/placeholder.svg?height=24&width=24",
+              },
+            ].map((team) => (
+              <Link
+                key={team.name}
+                href={`/${team.name.toLowerCase().replace(/ /g, "-")}`}
+                className="flex items-center"
+              >
+                <Image
+                  src={team.logo || "/placeholder.svg"}
+                  alt={team.name}
+                  width={24}
+                  height={24}
+                  className="w-6 h-6 mr-2"
+                />
+                <span className="text-sm">{team.name}</span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <main className="container mx-auto px-4 py-4 w-7/12">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+          {/* Left Sidebar */}
+          <div className="md:col-span-2 bg-white rounded shadow">
+            <div className="border-b">
+              <Link
+                href="/latest"
+                className="flex items-center p-3 hover:bg-gray-100"
+              >
+                <div className="relative">
+                  <div className="w-6 h-6 bg-red-500 rounded-full flex items-center justify-center">
+                    <span className="text-white text-xs font-bold">75</span>
                   </div>
-                </li>
-                <li>
-                  <Link
-                    href="https://thethao247.vn/bong-da-anh-c8/"
-                    title="Ngoại hạng Anh"
+                  <svg
+                    className="w-3 h-3 absolute -bottom-1 -right-1 text-red-500 fill-current"
+                    viewBox="0 0 24 24"
                   >
-                    #Ngoại hạng Anh
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="https://thethao247.vn/bong-da-quoc-te-c2/"
-                    title="Bóng đá quốc tế"
+                    <path d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                </div>
+                <span className="text-sm font-medium ml-3">LATEST</span>
+              </Link>
+              <Link
+                href="/video"
+                className="flex items-center p-3 hover:bg-gray-100"
+              >
+                <div className="w-6 h-6 flex items-center justify-center">
+                  <svg
+                    className="w-5 h-5"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
                   >
-                    #Bóng đá quốc tế
-                  </Link>
-                  <div className="cate-child bg-4">
-                    <div className="container">
-                      <nav>
-                        <Link
-                          href="https://thethao247.vn/ngoai-hang-anh-c8/"
-                          title="Ngoại hạng Anh"
-                        >
-                          #Ngoại hạng Anh
-                        </Link>
-                        <Link
-                          href="https://thethao247.vn/uefa-nations-league-c323/"
-                          title="UEFA Nations League"
-                        >
-                          #UEFA Nations League
-                        </Link>
-                        <Link
-                          href="https://thethao247.vn/cup-c2-europa-league-c75/"
-                          title="Cúp C2 Europa League"
-                        >
-                          #Cúp C2 Europa League
-                        </Link>
-                        <Link
-                          href="https://thethao247.vn/bong-da-tay-ban-nha-la-liga-c9/"
-                          title="Bóng đá Tây Ban Nha - La Liga"
-                        >
-                          #Bóng đá Tây Ban Nha - La Liga
-                        </Link>
-                        <Link
-                          href="https://thethao247.vn/bong-da-y-serie-a-c10/"
-                          title="Bóng đá Ý - Serie A"
-                        >
-                          #Bóng đá Ý - Serie A
-                        </Link>
-                        <Link
-                          href="https://thethao247.vn/bong-da-duc-c11/"
-                          title="Bóng đá Đức"
-                        >
-                          #Bóng đá Đức
-                        </Link>
-                        <Link
-                          href="https://thethao247.vn/ligue-1-c12/"
-                          title="Ligue 1"
-                        >
-                          #Ligue 1
-                        </Link>
-                      </nav>
-                    </div>
+                    <rect
+                      x="2"
+                      y="2"
+                      width="20"
+                      height="20"
+                      rx="2.18"
+                      ry="2.18"
+                    />
+                    <path d="M10 8l6 4-6 4V8z" />
+                  </svg>
+                </div>
+                <span className="text-sm font-medium ml-3">VIDEO</span>
+              </Link>
+              <Link
+                href="/livescore"
+                className="flex items-center p-3 hover:bg-gray-100"
+              >
+                <div className="w-6 h-6 flex items-center justify-center">
+                  <svg
+                    className="w-5 h-5"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
+                    <path d="M8 21h8" />
+                    <path d="M12 17v4" />
+                  </svg>
+                </div>
+                <span className="text-sm font-medium ml-3">LIVESCORE</span>
+              </Link>
+              <Link
+                href="/lich-thi-dau"
+                className="flex items-center p-3 hover:bg-gray-100"
+              >
+                <div className="w-6 h-6 flex items-center justify-center">
+                  <svg
+                    className="w-5 h-5"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                    <path d="M16 2v4" />
+                    <path d="M8 2v4" />
+                    <path d="M3 10h18" />
+                  </svg>
+                </div>
+                <span className="text-sm font-medium ml-3">LỊCH THI ĐẤU</span>
+              </Link>
+              <Link
+                href="/ket-qua"
+                className="flex items-center p-3 hover:bg-gray-100"
+              >
+                <div className="w-6 h-6 flex items-center justify-center">
+                  <svg
+                    className="w-5 h-5"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <circle cx="12" cy="8" r="6" />
+                    <path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11" />
+                  </svg>
+                </div>
+                <span className="text-sm font-medium ml-3">KẾT QUẢ</span>
+              </Link>
+              <Link
+                href="/bxh"
+                className="flex items-center p-3 hover:bg-gray-100"
+              >
+                <div className="w-6 h-6 flex items-center justify-center">
+                  <svg
+                    className="w-5 h-5"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <path d="M5 20h14" />
+                    <path d="M9 20V8" />
+                    <path d="M15 20v-4" />
+                    <path d="M12 20v-8" />
+                  </svg>
+                </div>
+                <span className="text-sm font-medium ml-3">BXH</span>
+              </Link>
+              <Link
+                href="/truc-tiep"
+                className="flex items-center p-3 hover:bg-gray-100"
+              >
+                <div className="relative w-6 h-6 flex items-center justify-center">
+                  <svg
+                    className="w-5 h-5"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <path d="M12 12m-10 0a10 10 0 1 0 20 0a10 10 0 1 0 -20 0" />
+                    <path d="M12 12m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" />
+                  </svg>
+                  <span className="absolute -top-1 -right-1 text-[10px] font-bold text-red-500">
+                    LIVE
+                  </span>
+                </div>
+                <span className="text-sm font-medium ml-3">TRỰC TIẾP</span>
+              </Link>
+            </div>
+
+            {/* League Navigation */}
+            <div className="py-2">
+              {[
+                {
+                  name: "V.LEAGUE 1",
+                  logo: "/placeholder.svg?height=24&width=24",
+                  bgColor: "bg-red-600",
+                },
+                {
+                  name: "NGOẠI HẠNG ANH",
+                  logo: "/placeholder.svg?height=24&width=24",
+                  bgColor: "bg-[#3D195B]",
+                },
+                {
+                  name: "V.LEAGUE 2",
+                  logo: "/placeholder.svg?height=24&width=24",
+                  bgColor: "bg-blue-600",
+                },
+                {
+                  name: "CUP C1",
+                  logo: "/placeholder.svg?height=24&width=24",
+                  bgColor: "bg-black",
+                },
+                {
+                  name: "LA LIGA",
+                  logo: "/placeholder.svg?height=24&width=24",
+                  bgColor: "bg-[#EE2744]",
+                },
+                {
+                  name: "LIGUE 1",
+                  logo: "/placeholder.svg?height=24&width=24",
+                  bgColor: "bg-[#091C3E]",
+                },
+                {
+                  name: "BUNDESLIGA",
+                  logo: "/placeholder.svg?height=24&width=24",
+                  bgColor: "bg-[#D20515]",
+                },
+                {
+                  name: "SERIE A",
+                  logo: "/placeholder.svg?height=24&width=24",
+                  bgColor: "bg-[#024494]",
+                },
+                {
+                  name: "CUP C2",
+                  logo: "/placeholder.svg?height=24&width=24",
+                  bgColor: "bg-[#0A4FA3]",
+                },
+                {
+                  name: "AFC CHAMPIONS LEAGUE",
+                  logo: "/placeholder.svg?height=24&width=24",
+                  bgColor: "bg-[#00A88F]",
+                },
+                {
+                  name: "EFL CUP",
+                  logo: "/placeholder.svg?height=24&width=24",
+                  bgColor: "bg-[#002F6C]",
+                },
+              ].map((league) => (
+                <Link
+                  key={league.name}
+                  href={`/${league.name.toLowerCase().replace(/ /g, "-")}`}
+                  className="flex items-center p-3 hover:bg-gray-100"
+                >
+                  <div
+                    className={`w-6 h-6 ${league.bgColor} rounded flex items-center justify-center mr-2`}
+                  >
+                    <Image
+                      src={league.logo || "/placeholder.svg"}
+                      alt={league.name}
+                      width={20}
+                      height={20}
+                      className="w-5 h-5 object-contain"
+                    />
                   </div>
-                </li>
-                <li>
-                  <Link
-                    href="https://thethao247.vn/nhan-dinh-bong-da-c288/"
-                    title="Nhận định"
-                  >
-                    #Nhận định
-                  </Link>
-                </li>
-                <li>
-                  <Link href="https://thethao247.vn/cup-c1-c13/" title="Cúp C1">
-                    #Cúp C1
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="https://thethao247.vn/chuyen-nhuong-c14/"
-                    title="Chuyển nhượng"
-                  >
-                    #Chuyển nhượng
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="https://thethao247.vn/the-thao-tong-hop-c5/"
-                    title="Thể Thao"
-                  >
-                    #Thể Thao
-                  </Link>
-                  <div className="cate-child bg-0">
-                    <div className="container">
-                      <nav>
-                        <Link
-                          href="https://thethao247.vn/pickleball-c342/"
-                          title="Pickleball"
-                        >
-                          #Pickleball
-                        </Link>
-                        <Link
-                          href="https://thethao247.vn/yoga-c340/"
-                          title="Yoga"
-                        >
-                          #Yoga
-                        </Link>
-                        <Link
-                          href="https://thethao247.vn/bong-chuyen-c45/"
-                          title="Bóng chuyền"
-                        >
-                          #Bóng chuyền
-                        </Link>
-                        <Link
-                          href="https://thethao247.vn/quan-vot-tennis-c4/"
-                          title="Tennis - Quần vợt"
-                        >
-                          #Tennis - Quần vợt
-                        </Link>
-                        <Link
-                          href="https://thethao247.vn/bong-ro-c43/"
-                          title="Bóng rổ"
-                        >
-                          #Bóng rổ
-                        </Link>
-                        <Link
-                          href="https://thethao247.vn/vo-thuat-c228/"
-                          title="Võ thuật"
-                        >
-                          #Võ thuật
-                        </Link>
-                        <Link
-                          href="https://thethao247.vn/the-gioi-phui-c192/"
-                          title="Thế giới Phủi"
-                        >
-                          #Thế giới Phủi
-                        </Link>
-                      </nav>
-                    </div>
-                  </div>
-                </li>
-                <li>
-                  <Link
-                    href="https://thethao247.vn/esports-c180/"
-                    title="Esports"
-                  >
-                    #Esports
-                  </Link>
-                  <div className="cate-child bg-1">
-                    <div className="container">
-                      <nav>
-                        <Link
-                          href="https://thethao247.vn/lmht-c181/"
-                          title="LMHT"
-                        >
-                          #LMHT
-                        </Link>
-                        <Link
-                          href="https://thethao247.vn/dau-truong-chan-ly-c303/"
-                          title="Đấu Trường Chân Lý"
-                        >
-                          #Đấu Trường Chân Lý
-                        </Link>
-                        <Link
-                          href="https://thethao247.vn/lmht-toc-chien-c289/"
-                          title="LMHT Tốc Chiến"
-                        >
-                          #LMHT Tốc Chiến
-                        </Link>
-                        <Link
-                          href="https://thethao247.vn/valorant-c305/"
-                          title="Valorant"
-                        >
-                          #Valorant
-                        </Link>
-                        <Link
-                          href="https://thethao247.vn/genshin-impact-c306/"
-                          title="Genshin Impact"
-                        >
-                          #Genshin Impact
-                        </Link>
-                        <Link
-                          href="https://thethao247.vn/cosplay-c307/"
-                          title="Cosplay"
-                        >
-                          #Cosplay
-                        </Link>
-                        <Link
-                          href="https://thethao247.vn/pubg-c236/"
-                          title="PUBG"
-                        >
-                          #PUBG
-                        </Link>
-                      </nav>
-                    </div>
-                  </div>
-                </li>
-                <li>
-                  <Link href="https://thethao247.vn/xe-c191/" title="Xe">
-                    #Xe
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="https://thethao247.vn/can-biet-c123/"
-                    title="Xu hướng"
-                  >
-                    #Xu hướng
-                  </Link>
-                </li>
-              </ul>
-              <div className="topsearch">
-                <a href="#" className="btn_search">
-                  <i className="icon-search far fa-times"></i>
-                </a>
+                  <span className="text-sm font-medium">{league.name}</span>
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          {/* Main Content */}
+          <div className="md:col-span-7">
+            <div className="bg-white rounded shadow p-4 mb-4">
+              <div className="relative">
+                <Image
+                  src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-q8HjJAsCco9dK8MHSxZWVTkCDzZ55H.png"
+                  alt="Vietnamese football players celebrating"
+                  width={800}
+                  height={450}
+                  className="w-full h-auto rounded"
+                />
+                <div className="absolute top-2 left-2 bg-blue-600 text-white text-xs px-2 py-1 rounded">
+                  BÓNG ĐÁ VIỆT NAM
+                </div>
+              </div>
+              <div className="mt-4">
+                <h1 className="text-2xl font-bold text-blue-600">
+                  XUÂN SƠN VƯỢT LOẠT SAO SHOWBIZ, DẪN ĐẦU TOP 10 người ảnh hưởng
+                  trên MXH
+                </h1>
+                <p className="text-gray-600 mt-2">
+                  Vượt qua một loạt sao đình đám của showbiz, tiền đạo Nguyễn
+                  Xuân Sơn dẫn đầu Top 10 người ảnh hưởng nổi bật nhất trên mạng
+                  xã hội tháng 1/2025.
+                </p>
               </div>
             </div>
           </div>
-        </nav>
-      </header>
-      <main>
-        <div className="container bg-white p-15">
-          <h1 style={{ display: "none" }}>
-            THỂ THAO 247 - Đọc báo bóng đá, tin thể thao 24h
-          </h1>
-          <div className="box-pick pb-15">
-            <div className="w140 is_desktop"></div>
-            <Image
-              src="https://cdn-img.thethao247.vn/storage/files/hoangtung/2025/02/24/neymar-santos-67bbd5343af1c.jpg"
-              width={610}
-              height={340}
-              alt="Neymar lập siêu phẩm phạt góc, 'gánh' Santos thắng đậm"
-            />
-            <span>lịch thi đấu bóng đá</span>
-            <span>Bóng đá Việt Nam</span>
+
+          {/* Right Sidebar */}
+          <div className="md:col-span-3">
+            <div className="bg-white rounded shadow p-4 mb-4">
+              {[
+                "Khởi tố nhóm thanh niên đi mã tấu, bắt cầu thủ quỳ trên sân bóng",
+                "Danh sách 24 đội bóng dự vòng loại 3 Asian Cup 2027",
+                {
+                  text: "Tiền đạo Brazil",
+                  highlight: "THAM VỌNG LẬP HAT-TRICK VÔ ĐỊCH VỚI CLB CAHN",
+                },
+                "GHI BÀN CHO REAL MADRID, ENDRICK VẪN TỎ RA THẤT VỌNG",
+                {
+                  text: "Tiến Linh nhận thêm",
+                  highlight: "QUÀ BÓNG VÀNG THỨ HAI",
+                },
+                "VỪA RỜI MU, RASHFORD ĐÃ QUYẾT ĐỊNH TƯƠNG LAI",
+                {
+                  text: "HLV TPHCM nói",
+                  highlight: "LỖI GẶP RUỘT TRƯỚC TRẬN ĐỐI ĐẦU HAGL",
+                },
+                {
+                  text: "Cựu sao Real:",
+                  highlight: "'MESSI GỌI TÔI LÀ THẰNG DA ĐEN NGU NGỐC'",
+                },
+              ].map((article, index) => (
+                <article
+                  key={index}
+                  className={`${index !== 7 ? "border-b" : ""} pb-3 mb-3`}
+                >
+                  <h3 className="font-bold text-sm hover:text-blue-600">
+                    <Link href="#">
+                      {typeof article === "string" ? (
+                        article
+                      ) : (
+                        <>
+                          {article.text}{" "}
+                          <span className="text-blue-600">
+                            {article.highlight}
+                          </span>
+                        </>
+                      )}
+                    </Link>
+                  </h3>
+                </article>
+              ))}
+            </div>
           </div>
         </div>
       </main>
