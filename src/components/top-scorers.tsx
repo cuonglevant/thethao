@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 type TopScorer = {
   pos: number;
   name: string;
@@ -28,21 +30,27 @@ export function TopScorers({
             >
               <div className="flex items-center space-x-3">
                 <span className="text-gray-600 w-6">{scorer.pos}</span>
-                <div className="w-8 h-8 rounded-full overflow-hidden">
-                  <img
+                <div className="w-8 h-8 rounded-full overflow-hidden relative">
+                  <Image
                     src={scorer.photo}
                     alt={scorer.name}
-                    className="w-full h-full object-cover"
+                    fill
+                    className="object-cover"
+                    sizes="32px"
                   />
                 </div>
                 <div className="flex flex-col">
                   <span className="font-medium">{scorer.name}</span>
                   <div className="flex items-center space-x-1">
-                    <img
-                      src={scorer.teamLogo}
-                      alt={scorer.team}
-                      className="w-4 h-4 object-contain"
-                    />
+                    <div className="relative w-4 h-4">
+                      <Image
+                        src={scorer.teamLogo}
+                        alt={scorer.team}
+                        fill
+                        className="object-contain"
+                        sizes="16px"
+                      />
+                    </div>
                     <span className="text-xs text-gray-600">{scorer.team}</span>
                   </div>
                 </div>

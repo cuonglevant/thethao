@@ -1,11 +1,17 @@
-import { Metadata } from "next";
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { ArticleCard } from "@/components/article-card";
-import { MatchSchedule } from "@/components/match-schedule";
-import { LeagueStandings } from "@/components/league-standings";
-import { TopScorers } from "@/components/top-scorers";
+import { MatchSchedule } from "@/components/ui/match-schedule";
+import { LeagueStandings } from "@/components/ui/league-standings";
+import { TopScorer } from "@/components/ui/top-scorer";
+
+// Force static generation
+export const dynamic = "error";
+export const dynamicParams = false;
+export const revalidate = false;
 
 // Get title based on slug
-const titles: { [key: string]: string } = {
+const titles = {
   "bong-da-quoc-te": "Bóng đá Quốc tế",
   "bong-da-viet-nam": "Bóng đá Việt Nam",
   "chuyen-nhuong": "Chuyển nhượng",
@@ -18,17 +24,26 @@ const titles: { [key: string]: string } = {
   xe: "Xe",
   "xu-huong": "Xu hướng",
   "ket-qua": "Kết quả bóng đá",
-};
+} as const;
 
-type Props = {
-  params: Promise<{ slug: string }>;
-  searchParams: { [key: string]: string | string[] | undefined };
-};
+type Slug = keyof typeof titles;
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+interface PageProps {
+  params: Promise<{ slug: Slug }>;
+}
+
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
   const resolvedParams = await params;
-  const title = titles[resolvedParams.slug] || "Trang không tồn tại";
+  if (!(resolvedParams.slug in titles)) {
+    return {
+      title: "Trang không tồn tại",
+      description: "Trang bạn đang tìm kiếm không tồn tại.",
+    };
+  }
 
+  const title = titles[resolvedParams.slug];
   return {
     title,
     description: `Tin tức ${title.toLowerCase()} mới nhất`,
@@ -70,9 +85,11 @@ const matchData = [
 
 const standingsData = [
   {
-    pos: 1,
-    team: "Nam Định",
-    logo: "/teams/nam-dinh.png",
+    position: 1,
+    team: {
+      name: "Nam Định",
+      logo: "/teams/nam-dinh.png",
+    },
     played: 15,
     won: 9,
     drawn: 3,
@@ -81,9 +98,11 @@ const standingsData = [
     points: 30,
   },
   {
-    pos: 2,
-    team: "Công An Hà Nội",
-    logo: "/teams/cahn.png",
+    position: 2,
+    team: {
+      name: "Công An Hà Nội",
+      logo: "/teams/cahn.png",
+    },
     played: 15,
     won: 8,
     drawn: 4,
@@ -92,9 +111,11 @@ const standingsData = [
     points: 28,
   },
   {
-    pos: 3,
-    team: "Hà Nội FC",
-    logo: "/teams/hanoi-fc.png",
+    position: 3,
+    team: {
+      name: "Hà Nội FC",
+      logo: "/teams/hanoi-fc.png",
+    },
     played: 15,
     won: 8,
     drawn: 3,
@@ -103,9 +124,11 @@ const standingsData = [
     points: 27,
   },
   {
-    pos: 4,
-    team: "Bình Định",
-    logo: "/teams/binh-dinh.png",
+    position: 4,
+    team: {
+      name: "Bình Định",
+      logo: "/teams/binh-dinh.png",
+    },
     played: 15,
     won: 7,
     drawn: 5,
@@ -114,9 +137,11 @@ const standingsData = [
     points: 26,
   },
   {
-    pos: 5,
-    team: "Sông Lam Nghệ An",
-    logo: "/teams/slna.png",
+    position: 5,
+    team: {
+      name: "Sông Lam Nghệ An",
+      logo: "/teams/slna.png",
+    },
     played: 15,
     won: 7,
     drawn: 4,
@@ -125,9 +150,11 @@ const standingsData = [
     points: 25,
   },
   {
-    pos: 6,
-    team: "Hồ Chí Minh",
-    logo: "/teams/hcm.png",
+    position: 6,
+    team: {
+      name: "Hồ Chí Minh",
+      logo: "/teams/hcm.png",
+    },
     played: 15,
     won: 6,
     drawn: 5,
@@ -136,9 +163,11 @@ const standingsData = [
     points: 23,
   },
   {
-    pos: 7,
-    team: "HAGL",
-    logo: "/teams/hagl.png",
+    position: 7,
+    team: {
+      name: "HAGL",
+      logo: "/teams/hagl.png",
+    },
     played: 15,
     won: 5,
     drawn: 4,
@@ -147,9 +176,11 @@ const standingsData = [
     points: 19,
   },
   {
-    pos: 8,
-    team: "Đà Nẵng",
-    logo: "/teams/danang.png",
+    position: 8,
+    team: {
+      name: "Đà Nẵng",
+      logo: "/teams/danang.png",
+    },
     played: 15,
     won: 4,
     drawn: 5,
@@ -158,9 +189,11 @@ const standingsData = [
     points: 17,
   },
   {
-    pos: 9,
-    team: "Bình Dương",
-    logo: "/teams/binh-duong.png",
+    position: 9,
+    team: {
+      name: "Bình Dương",
+      logo: "/teams/binh-duong.png",
+    },
     played: 15,
     won: 3,
     drawn: 4,
@@ -172,50 +205,84 @@ const standingsData = [
 
 const topScorersData = [
   {
-    pos: 1,
-    name: "Nguyễn Tiến Linh",
-    team: "Bình Dương",
-    teamLogo: "/teams/binh-duong.png",
+    position: 1,
+    player: {
+      name: "Nguyễn Tiến Linh",
+      image: "/players/tien-linh.jpg",
+    },
+    team: {
+      name: "Bình Dương",
+      logo: "/teams/binh-duong.png",
+    },
     goals: 10,
-    photo: "/players/tien-linh.jpg",
+    assists: 5,
+    matches: 15,
   },
   {
-    pos: 2,
-    name: "Alan Grafite",
-    team: "Công An Hà Nội",
-    teamLogo: "/teams/cahn.png",
+    position: 2,
+    player: {
+      name: "Alan Grafite",
+      image: "/players/grafite.jpg",
+    },
+    team: {
+      name: "Công An Hà Nội",
+      logo: "/teams/cahn.png",
+    },
     goals: 8,
-    photo: "/players/grafite.jpg",
+    assists: 4,
+    matches: 14,
   },
   {
-    pos: 3,
-    name: "Leo Artur",
-    team: "Công An Hà Nội",
-    teamLogo: "/teams/cahn.png",
+    position: 3,
+    player: {
+      name: "Leo Artur",
+      image: "/players/leo-artur.jpg",
+    },
+    team: {
+      name: "Công An Hà Nội",
+      logo: "/teams/cahn.png",
+    },
     goals: 7,
-    photo: "/players/leo-artur.jpg",
+    assists: 3,
+    matches: 15,
   },
   {
-    pos: 3,
-    name: "Goncalves da Silva",
-    team: "Nam Định",
-    teamLogo: "/teams/nam-dinh.png",
+    position: 4,
+    player: {
+      name: "Goncalves da Silva",
+      image: "/players/goncalves.jpg",
+    },
+    team: {
+      name: "Nam Định",
+      logo: "/teams/nam-dinh.png",
+    },
     goals: 7,
-    photo: "/players/goncalves.jpg",
+    assists: 2,
+    matches: 13,
   },
   {
-    pos: 3,
-    name: "Bezerra R.",
-    team: "Nam Định",
-    teamLogo: "/teams/nam-dinh.png",
+    position: 5,
+    player: {
+      name: "Bezerra R.",
+      image: "/players/bezerra.jpg",
+    },
+    team: {
+      name: "Nam Định",
+      logo: "/teams/nam-dinh.png",
+    },
     goals: 7,
-    photo: "/players/bezerra.jpg",
+    assists: 2,
+    matches: 15,
   },
 ];
 
-export default async function DynamicPage({ params }: Props) {
+export default async function Page({ params }: PageProps) {
   const resolvedParams = await params;
-  const title = titles[resolvedParams.slug] || "Trang không tồn tại";
+  if (!(resolvedParams.slug in titles)) {
+    notFound();
+  }
+
+  const title = titles[resolvedParams.slug];
   return (
     <main className="container mx-auto px-4 py-4 sm:py-6 lg:py-8">
       <div className="text-2xl font-bold mb-4">{title}</div>
@@ -256,16 +323,15 @@ export default async function DynamicPage({ params }: Props) {
         {/* Right column - 4 columns on large screens, full width on mobile */}
         <div className="lg:col-span-4 space-y-4 sm:space-y-6">
           <LeagueStandings teams={standingsData} />
-          <TopScorers scorers={topScorersData} />
+          <TopScorer scorers={topScorersData} />
         </div>
       </div>
     </main>
   );
 }
 
-// Generate static paths
-export async function generateStaticParams() {
-  return Object.keys(titles).map((slug) => ({
-    slug: slug,
+export function generateStaticParams(): Array<{ slug: Slug }> {
+  return (Object.keys(titles) as Array<Slug>).map((slug) => ({
+    slug,
   }));
 }

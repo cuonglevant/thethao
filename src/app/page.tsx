@@ -1,15 +1,13 @@
-import { MainNav } from "@/components/ui/main-nav";
 import { Sidebar } from "@/components/ui/sidebar";
 import { RightSidebar } from "@/components/ui/right-sidebar";
 import { MainContent } from "@/components/ui/main-content";
 import { MatchSchedule } from "@/components/ui/match-schedule";
 import { LeagueStandings } from "@/components/ui/league-standings";
-import { NormalArticle } from "@/components/ui/normal-article";
+import { TopScorer } from "@/components/ui/top-scorer";
 
 export default function Home() {
   return (
     <div className="min-h-screen bg-gray-100">
-      <MainNav />
       <main className="container mx-auto px-4 py-4 max-w-[1200px]">
         <div className="grid grid-cols-1 lg:grid-cols-[240px_1fr_300px] gap-4 mb-4">
           {/* Sidebar - hidden on mobile, shown as overlay on tablet, normal on desktop */}
@@ -23,22 +21,10 @@ export default function Home() {
               <MainContent.Featured />
             </div>
             <MatchSchedule />
-            {/* <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <NormalArticle
-                image="/placeholder.svg?height=250&width=400"
-                title="Thắng đậm U20 Malaysia, U20 Việt Nam vào chung kết"
-                category="U20 VIỆT NAM"
-                categoryHref="/u20-viet-nam"
-                date="2 giờ trước"
-              />
-              <NormalArticle
-                image="/placeholder.svg?height=250&width=400"
-                title="HLV Troussier tiết lộ lý do gọi cầu thủ HAGL"
-                category="ĐỘI TUYỂN"
-                categoryHref="/doi-tuyen"
-                date="3 giờ trước"
-              />
-            </div> */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <TopScorer />
+              <LeagueStandings />
+            </div>
           </div>
 
           {/* Right Sidebar */}

@@ -2,12 +2,21 @@
 
 import { NavItem } from "./nav-item";
 import { LeagueItem } from "./league-item";
+import Image from "next/image";
 
 const navigationItems = [
   {
     href: "/latest",
     label: "LATEST",
-    badge: "count",
+    icon: (
+      <Image
+        src="/latest.png"
+        alt="Latest"
+        width={20}
+        height={20}
+        className="w-5 h-5"
+      />
+    ),
   },
   {
     href: "/video",

@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 type Props = {
   image: string;
   title: string;
@@ -23,7 +25,13 @@ export const ArticleCard = ({
     }`}
   >
     <div className={`relative ${imageHeight}`}>
-      <img src={image} alt={title} className="w-full h-full object-cover" />
+      <Image
+        src={image}
+        alt={title}
+        fill
+        className="object-cover"
+        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+      />
     </div>
     <div className="p-2 sm:p-3">
       <h3
