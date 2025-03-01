@@ -16,6 +16,9 @@ export const metadata: Metadata = {
   title: "Thể thao 247- Tin thể thao, báo bóng đá mới nhất",
   description:
     "Nơi tổng hợp tin thể thao, bóng đá mới nhất. Cập nhật liên tục 24/7.",
+  icons: {
+    icon: "/logo.svg",
+  },
 };
 
 export default function RootLayout({

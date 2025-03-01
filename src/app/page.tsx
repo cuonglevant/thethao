@@ -1,132 +1,14 @@
-import Image from "next/image";
+import { MainNav } from "@/components/ui/main-nav";
 import Link from "next/link";
-import { Send, User, UserPlus, Home } from "lucide-react";
-import { MainNav } from "@/components/main-nav";
+import Image from "next/image";
 
 export default function Thethao247() {
   return (
     <div className="min-h-screen bg-gray-100">
-      {/* Header */}
-      <header className="bg-white border-b">
-        <div className="container mx-auto px-4 py-2 flex items-center justify-between w-7/12">
-          <Link href="/" title="Thể thao 247">
-            <Image
-              src="https://thethao247.vn/frontend/images/logo2022.svg"
-              alt="Thể thao 247"
-              width={282}
-              height={73}
-            />
-          </Link>
-          <div className="flex items-center space-x-4">
-            <Link
-              href="/quang-cao"
-              className="flex items-center text-gray-600 hover:text-blue-700"
-            >
-              <div className="w-5 h-5 rounded-full bg-red-500 flex items-center justify-center mr-2">
-                <span className="text-white text-xs">●</span>
-              </div>
-              <span className="text-sm font-medium">QUẢNG CÁO</span>
-            </Link>
-            <Link
-              href="/gui-bai"
-              className="flex items-center text-gray-600 hover:text-blue-700"
-            >
-              <Send size={16} className="mr-2 text-blue-600" />
-              <span className="text-sm font-medium">Gửi bài</span>
-            </Link>
-            <button className="flex items-center px-3 py-1 border border-blue-600 text-blue-600 rounded hover:bg-blue-50">
-              <User size={16} className="mr-2" />
-              <span className="text-sm font-medium">Đăng nhập</span>
-            </button>
-            <button className="flex items-center px-3 py-1 border border-blue-600 text-blue-600 rounded hover:bg-blue-50">
-              <UserPlus size={16} className="mr-2" />
-              <span className="text-sm font-medium">Đăng ký</span>
-            </button>
-          </div>
-        </div>
-      </header>
-
-      {/* Main Navigation */}
-      <nav className="bg-[#1a3b7d] text-white py-2">
-        <div className="container mx-auto px-4 w-7/12">
-          <div className="flex items-center justify-between space-x-3">
-            <div className=" flex items-center space-x-1 overflow-x-auto scrollbar-hide">
-              <Link
-                href="/"
-                className="flex items-center hover:bg-blue-800 px-2 py-1 rounded"
-              >
-                <Home size={16} className="mr-1" />
-              </Link>
-              {[
-                "LỊCH THI ĐẤU",
-                "BÓNG ĐÁ VIỆT NAM",
-                "NGOẠI HẠNG ANH",
-                "BÓNG ĐÁ QUỐC TẾ",
-                "NHẬN ĐỊNH",
-                "CÚP C1",
-                "CHUYỂN NHƯỢNG",
-                "THỂ THAO",
-                "ESPORTS",
-                "XE",
-                "XU HƯỚNG",
-              ].map((item) => (
-                <Link
-                  key={item}
-                  href={`/${item.toLowerCase().replace(/ /g, "-")}`}
-                  className="whitespace-nowrap hover:bg-blue-800 px-2 py-1 rounded text-sm"
-                >
-                  #{item}
-                </Link>
-              ))}
-            </div>
-            <MainNav />
-          </div>
-        </div>
-      </nav>
-
-      {/* Team Navigation */}
-      <div className="bg-white py-2 border-b">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-center space-x-8 overflow-x-auto scrollbar-hide">
-            {[
-              { name: "MU", logo: "/placeholder.svg?height=24&width=24" },
-              {
-                name: "Liverpool",
-                logo: "/placeholder.svg?height=24&width=24",
-              },
-              { name: "Arsenal", logo: "/placeholder.svg?height=24&width=24" },
-              { name: "Man City", logo: "/placeholder.svg?height=24&width=24" },
-              { name: "Chelsea", logo: "/placeholder.svg?height=24&width=24" },
-              {
-                name: "Barcelona",
-                logo: "/placeholder.svg?height=24&width=24",
-              },
-              {
-                name: "Real Madrid",
-                logo: "/placeholder.svg?height=24&width=24",
-              },
-            ].map((team) => (
-              <Link
-                key={team.name}
-                href={`/${team.name.toLowerCase().replace(/ /g, "-")}`}
-                className="flex items-center"
-              >
-                <Image
-                  src={team.logo || "/placeholder.svg"}
-                  alt={team.name}
-                  width={24}
-                  height={24}
-                  className="w-6 h-6 mr-2"
-                />
-                <span className="text-sm">{team.name}</span>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </div>
+      <MainNav />
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-4 w-7/12">
+      <main className="container mx-auto w-7/12 px-4 py-4">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
           {/* Left Sidebar */}
           <div className="md:col-span-2 bg-white rounded shadow">
@@ -139,12 +21,6 @@ export default function Thethao247() {
                   <div className="w-6 h-6 bg-red-500 rounded-full flex items-center justify-center">
                     <span className="text-white text-xs font-bold">75</span>
                   </div>
-                  <svg
-                    className="w-3 h-3 absolute -bottom-1 -right-1 text-red-500 fill-current"
-                    viewBox="0 0 24 24"
-                  >
-                    <path d="M13 10V3L4 14h7v7l9-11h-7z" />
-                  </svg>
                 </div>
                 <span className="text-sm font-medium ml-3">LATEST</span>
               </Link>
@@ -152,22 +28,15 @@ export default function Thethao247() {
                 href="/video"
                 className="flex items-center p-3 hover:bg-gray-100"
               >
-                <div className="w-6 h-6 flex items-center justify-center">
+                <div className="w-6 h-6">
                   <svg
-                    className="w-5 h-5"
                     viewBox="0 0 24 24"
+                    className="w-5 h-5"
                     fill="none"
                     stroke="currentColor"
                     strokeWidth="2"
                   >
-                    <rect
-                      x="2"
-                      y="2"
-                      width="20"
-                      height="20"
-                      rx="2.18"
-                      ry="2.18"
-                    />
+                    <rect x="2" y="2" width="20" height="20" rx="2" />
                     <path d="M10 8l6 4-6 4V8z" />
                   </svg>
                 </div>
@@ -177,17 +46,18 @@ export default function Thethao247() {
                 href="/livescore"
                 className="flex items-center p-3 hover:bg-gray-100"
               >
-                <div className="w-6 h-6 flex items-center justify-center">
+                <div className="w-6 h-6">
                   <svg
-                    className="w-5 h-5"
                     viewBox="0 0 24 24"
+                    className="w-5 h-5"
                     fill="none"
                     stroke="currentColor"
                     strokeWidth="2"
                   >
-                    <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
-                    <path d="M8 21h8" />
-                    <path d="M12 17v4" />
+                    <rect x="2" y="4" width="20" height="16" rx="2" />
+                    <path d="M6 8h4" />
+                    <path d="M14 16h4" />
+                    <path d="M6 12h12" />
                   </svg>
                 </div>
                 <span className="text-sm font-medium ml-3">LIVESCORE</span>
@@ -196,15 +66,15 @@ export default function Thethao247() {
                 href="/lich-thi-dau"
                 className="flex items-center p-3 hover:bg-gray-100"
               >
-                <div className="w-6 h-6 flex items-center justify-center">
+                <div className="w-6 h-6">
                   <svg
-                    className="w-5 h-5"
                     viewBox="0 0 24 24"
+                    className="w-5 h-5"
                     fill="none"
                     stroke="currentColor"
                     strokeWidth="2"
                   >
-                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                    <rect x="3" y="4" width="18" height="18" rx="2" />
                     <path d="M16 2v4" />
                     <path d="M8 2v4" />
                     <path d="M3 10h18" />
@@ -216,10 +86,10 @@ export default function Thethao247() {
                 href="/ket-qua"
                 className="flex items-center p-3 hover:bg-gray-100"
               >
-                <div className="w-6 h-6 flex items-center justify-center">
+                <div className="w-6 h-6">
                   <svg
-                    className="w-5 h-5"
                     viewBox="0 0 24 24"
+                    className="w-5 h-5"
                     fill="none"
                     stroke="currentColor"
                     strokeWidth="2"
@@ -234,10 +104,10 @@ export default function Thethao247() {
                 href="/bxh"
                 className="flex items-center p-3 hover:bg-gray-100"
               >
-                <div className="w-6 h-6 flex items-center justify-center">
+                <div className="w-6 h-6">
                   <svg
-                    className="w-5 h-5"
                     viewBox="0 0 24 24"
+                    className="w-5 h-5"
                     fill="none"
                     stroke="currentColor"
                     strokeWidth="2"
@@ -254,20 +124,20 @@ export default function Thethao247() {
                 href="/truc-tiep"
                 className="flex items-center p-3 hover:bg-gray-100"
               >
-                <div className="relative w-6 h-6 flex items-center justify-center">
+                <div className="relative w-6 h-6">
+                  <span className="absolute -top-1 -right-1 text-[10px] font-bold text-red-500">
+                    LIVE
+                  </span>
                   <svg
-                    className="w-5 h-5"
                     viewBox="0 0 24 24"
+                    className="w-5 h-5"
                     fill="none"
                     stroke="currentColor"
                     strokeWidth="2"
                   >
-                    <path d="M12 12m-10 0a10 10 0 1 0 20 0a10 10 0 1 0 -20 0" />
-                    <path d="M12 12m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" />
+                    <circle cx="12" cy="12" r="10" />
+                    <circle cx="12" cy="12" r="3" />
                   </svg>
-                  <span className="absolute -top-1 -right-1 text-[10px] font-bold text-red-500">
-                    LIVE
-                  </span>
                 </div>
                 <span className="text-sm font-medium ml-3">TRỰC TIẾP</span>
               </Link>
@@ -279,57 +149,54 @@ export default function Thethao247() {
                 {
                   name: "V.LEAGUE 1",
                   logo: "/placeholder.svg?height=24&width=24",
-                  bgColor: "bg-red-600",
                 },
                 {
                   name: "NGOẠI HẠNG ANH",
                   logo: "/placeholder.svg?height=24&width=24",
-                  bgColor: "bg-[#3D195B]",
                 },
                 {
                   name: "V.LEAGUE 2",
                   logo: "/placeholder.svg?height=24&width=24",
-                  bgColor: "bg-blue-600",
                 },
-                {
-                  name: "CUP C1",
-                  logo: "/placeholder.svg?height=24&width=24",
-                  bgColor: "bg-black",
-                },
+                { name: "CUP C1", logo: "/placeholder.svg?height=24&width=24" },
                 {
                   name: "LA LIGA",
                   logo: "/placeholder.svg?height=24&width=24",
-                  bgColor: "bg-[#EE2744]",
                 },
                 {
                   name: "LIGUE 1",
                   logo: "/placeholder.svg?height=24&width=24",
-                  bgColor: "bg-[#091C3E]",
                 },
                 {
                   name: "BUNDESLIGA",
                   logo: "/placeholder.svg?height=24&width=24",
-                  bgColor: "bg-[#D20515]",
                 },
                 {
                   name: "SERIE A",
                   logo: "/placeholder.svg?height=24&width=24",
-                  bgColor: "bg-[#024494]",
                 },
-                {
-                  name: "CUP C2",
-                  logo: "/placeholder.svg?height=24&width=24",
-                  bgColor: "bg-[#0A4FA3]",
-                },
+                { name: "CUP C2", logo: "/placeholder.svg?height=24&width=24" },
                 {
                   name: "AFC CHAMPIONS LEAGUE",
                   logo: "/placeholder.svg?height=24&width=24",
-                  bgColor: "bg-[#00A88F]",
                 },
                 {
                   name: "EFL CUP",
                   logo: "/placeholder.svg?height=24&width=24",
-                  bgColor: "bg-[#002F6C]",
+                },
+                { name: "MLS", logo: "/placeholder.svg?height=24&width=24" },
+                { name: "FA CUP", logo: "/placeholder.svg?height=24&width=24" },
+                {
+                  name: "SAUDI PRO LEAGUE",
+                  logo: "/placeholder.svg?height=24&width=24",
+                },
+                {
+                  name: "WORLD CUP 2026",
+                  logo: "/placeholder.svg?height=24&width=24",
+                },
+                {
+                  name: "ASIAN CUP",
+                  logo: "/placeholder.svg?height=24&width=24",
                 },
               ].map((league) => (
                 <Link
@@ -337,9 +204,7 @@ export default function Thethao247() {
                   href={`/${league.name.toLowerCase().replace(/ /g, "-")}`}
                   className="flex items-center p-3 hover:bg-gray-100"
                 >
-                  <div
-                    className={`w-6 h-6 ${league.bgColor} rounded flex items-center justify-center mr-2`}
-                  >
+                  <div className="w-6 h-6 flex items-center justify-center mr-2">
                     <Image
                       src={league.logo || "/placeholder.svg"}
                       alt={league.name}
@@ -357,28 +222,109 @@ export default function Thethao247() {
           {/* Main Content */}
           <div className="md:col-span-7">
             <div className="bg-white rounded shadow p-4 mb-4">
-              <div className="relative">
-                <Image
-                  src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-q8HjJAsCco9dK8MHSxZWVTkCDzZ55H.png"
-                  alt="Vietnamese football players celebrating"
-                  width={800}
-                  height={450}
-                  className="w-full h-auto rounded"
-                />
-                <div className="absolute top-2 left-2 bg-blue-600 text-white text-xs px-2 py-1 rounded">
-                  BÓNG ĐÁ VIỆT NAM
+              <div className="space-y-4">
+                {/* Main Article */}
+                <article>
+                  <div className="relative">
+                    <Image
+                      src="/liver.png"
+                      alt="Ronaldo in action"
+                      width={800}
+                      height={450}
+                      className="w-full h-auto rounded"
+                    />
+                    <Link
+                      href="/bong-da-quoc-te"
+                      className="absolute top-2 left-2 text-xs bg-white/90 px-2 py-1 rounded"
+                    >
+                      BÓNG ĐÁ QUỐC TẾ
+                    </Link>
+                  </div>
+                  <h1 className="text-2xl font-bold mt-3">
+                    RONALDO BẤT LỰC, AL NASSR THUA ĐAU ĐỚN
+                  </h1>
+                  <p className="text-gray-600 mt-2 text-sm">
+                    (Kết quả bóng đá Al Nassr vs Al Orubah) - Cristiano Ronaldo
+                    và các đồng đội đã thất bại đau đớn trước Al Orubah trong
+                    trận đấu thuộc vòng 23 Saudi League, qua đó càng rời xa cuộc
+                    đua vô địch.
+                  </p>
+                </article>
+
+                {/* Grid Articles */}
+                <div className="grid grid-cols-3 gap-4 mt-6">
+                  <article>
+                    <div className="relative">
+                      <Image
+                        src="/placeholder.svg?height=200&width=300"
+                        alt="Nguyễn Thùy Linh"
+                        width={300}
+                        height={200}
+                        className="w-full h-[120px] object-cover rounded"
+                      />
+                      <Link
+                        href="/doi-tuyen"
+                        className="absolute top-2 left-2 text-xs bg-white/90 px-2 py-1 rounded"
+                      >
+                        ĐỘI TUYỂN
+                      </Link>
+                    </div>
+                    <h2 className="mt-2 text-sm font-medium">
+                      Thắng thóc gỡ thủ trễ,{" "}
+                      <span className="text-[#0088FF]">
+                        NGUYỄN THÙY LINH LỌT BÁN KẾT ĐỨC MỞ RỘNG 2025
+                      </span>
+                    </h2>
+                  </article>
+
+                  <article>
+                    <div className="relative">
+                      <Image
+                        src="/placeholder.svg?height=200&width=300"
+                        alt="Nam Định team celebration"
+                        width={300}
+                        height={200}
+                        className="w-full h-[120px] object-cover rounded"
+                      />
+                      <Link
+                        href="/bong-da-viet-nam"
+                        className="absolute top-2 left-2 text-xs bg-white/90 px-2 py-1 rounded"
+                      >
+                        BÓNG ĐÁ VIỆT NAM
+                      </Link>
+                    </div>
+                    <h2 className="mt-2 text-sm font-medium">
+                      Thắng Viettel ngay tại Mỹ Đình,{" "}
+                      <span className="text-[#0088FF]">
+                        NAM ĐỊNH XÂY CHẮC NGÔI ĐẦU
+                      </span>
+                    </h2>
+                  </article>
+
+                  <article>
+                    <div className="relative">
+                      <Image
+                        src="/placeholder.svg?height=200&width=300"
+                        alt="Ninh Bình team"
+                        width={300}
+                        height={200}
+                        className="w-full h-[120px] object-cover rounded"
+                      />
+                      <Link
+                        href="/bong-da-viet-nam"
+                        className="absolute top-2 left-2 text-xs bg-white/90 px-2 py-1 rounded"
+                      >
+                        BÓNG ĐÁ VIỆT NAM
+                      </Link>
+                    </div>
+                    <h2 className="mt-2 text-sm font-medium">
+                      Hoàng Đức tỏa sáng,{" "}
+                      <span className="text-[#0088FF]">
+                        NINH BÌNH TOÀN THẮNG TRẬN THỨ 10
+                      </span>
+                    </h2>
+                  </article>
                 </div>
-              </div>
-              <div className="mt-4">
-                <h1 className="text-2xl font-bold text-blue-600">
-                  XUÂN SƠN VƯỢT LOẠT SAO SHOWBIZ, DẪN ĐẦU TOP 10 người ảnh hưởng
-                  trên MXH
-                </h1>
-                <p className="text-gray-600 mt-2">
-                  Vượt qua một loạt sao đình đám của showbiz, tiền đạo Nguyễn
-                  Xuân Sơn dẫn đầu Top 10 người ảnh hưởng nổi bật nhất trên mạng
-                  xã hội tháng 1/2025.
-                </p>
               </div>
             </div>
           </div>
@@ -386,48 +332,79 @@ export default function Thethao247() {
           {/* Right Sidebar */}
           <div className="md:col-span-3">
             <div className="bg-white rounded shadow p-4 mb-4">
-              {[
-                "Khởi tố nhóm thanh niên đi mã tấu, bắt cầu thủ quỳ trên sân bóng",
-                "Danh sách 24 đội bóng dự vòng loại 3 Asian Cup 2027",
-                {
-                  text: "Tiền đạo Brazil",
-                  highlight: "THAM VỌNG LẬP HAT-TRICK VÔ ĐỊCH VỚI CLB CAHN",
-                },
-                "GHI BÀN CHO REAL MADRID, ENDRICK VẪN TỎ RA THẤT VỌNG",
-                {
-                  text: "Tiến Linh nhận thêm",
-                  highlight: "QUÀ BÓNG VÀNG THỨ HAI",
-                },
-                "VỪA RỜI MU, RASHFORD ĐÃ QUYẾT ĐỊNH TƯƠNG LAI",
-                {
-                  text: "HLV TPHCM nói",
-                  highlight: "LỖI GẶP RUỘT TRƯỚC TRẬN ĐỐI ĐẦU HAGL",
-                },
-                {
-                  text: "Cựu sao Real:",
-                  highlight: "'MESSI GỌI TÔI LÀ THẰNG DA ĐEN NGU NGỐC'",
-                },
-              ].map((article, index) => (
-                <article
-                  key={index}
-                  className={`${index !== 7 ? "border-b" : ""} pb-3 mb-3`}
-                >
-                  <h3 className="font-bold text-sm hover:text-blue-600">
-                    <Link href="#">
-                      {typeof article === "string" ? (
-                        article
-                      ) : (
-                        <>
-                          {article.text}{" "}
-                          <span className="text-blue-600">
-                            {article.highlight}
-                          </span>
-                        </>
-                      )}
+              <div className="space-y-4 max-h-[600px] overflow-y-auto">
+                <article>
+                  <Link
+                    href="#"
+                    className="block text-[#0088FF] font-bold hover:underline"
+                  >
+                    HLV VIETTEL PHẢN NẠN TRỌNG TÀI ở trận thua Nam Định
+                  </Link>
+                </article>
+                <article>
+                  <Link
+                    href="#"
+                    className="block text-[#0088FF] font-bold hover:underline"
+                  >
+                    MESSI THỪA NHẬN NỖI BUỒN LỚN BẬC NHẤT SỰ NGHIỆP, BARCA CÓ
+                    LIÊN QUAN!
+                  </Link>
+                </article>
+                <article>
+                  <Link
+                    href="#"
+                    className="block text-[#0088FF] font-bold hover:underline"
+                  >
+                    RODRI TÁI XUẤT MAN CITY SAU CHẤN THƯƠNG, CẢ CHÂU ÂU DÃN
+                    KHIẾP SỢ!
+                  </Link>
+                </article>
+                <article>
+                  <Link href="#" className="block text-sm">
+                    Choáng váng trước số tiền mà Văn Toàn cho Hoà Minzy vay,
+                    đúng bạn thân nhà người ta!
+                  </Link>
+                </article>
+                <article>
+                  <Link
+                    href="#"
+                    className="block text-[#0088FF] font-bold hover:underline"
+                  >
+                    ĐÃ BẠI STUTTGART, BAYERN MUNICH XÂY CHẮC NGÔI ĐẦU BUNDESLIGA
+                    2024/25
+                  </Link>
+                </article>
+                <article>
+                  <h3 className="text-sm">
+                    Tiền vệ Tuấn Anh{" "}
+                    <Link
+                      href="#"
+                      className="text-[#0088FF] font-bold hover:underline"
+                    >
+                      GHI ĐIỂM VỚI HLV KIM SANG SIK
                     </Link>
                   </h3>
                 </article>
-              ))}
+                <article>
+                  <h3 className="text-sm">
+                    HLV Popov tiếp tục{" "}
+                    <Link
+                      href="#"
+                      className="text-[#0088FF] font-bold hover:underline"
+                    >
+                      KHÔNG HÀI LÒNG VỚI CÔNG TÁC TRỌNG TÀI
+                    </Link>
+                  </h3>
+                </article>
+                <article>
+                  <h3 className="text-sm">
+                    MBAPPE VIỆT NAM GHI BÀN DUY NHẤT,{" "}
+                    <Link href="#" className="text-[#0088FF] hover:underline">
+                      giúp đội nhà thăng hoa
+                    </Link>
+                  </h3>
+                </article>
+              </div>
             </div>
           </div>
         </div>

@@ -1,20 +1,5 @@
 import { Metadata } from "next";
 
-// Define valid slugs
-const validSlugs = [
-  "bong-da-quoc-te",
-  "bong-da-viet-nam",
-  "chuyen-nhuong",
-  "cup-c1",
-  "esport",
-  "lich-thi-dau",
-  "ngoai-hang-anh",
-  "nhan-dinh",
-  "the-thao",
-  "xe",
-  "xu-huong",
-];
-
 // Get title based on slug
 const titles: { [key: string]: string } = {
   "bong-da-quoc-te": "Bóng đá Quốc tế",
@@ -30,11 +15,12 @@ const titles: { [key: string]: string } = {
   "xu-huong": "Xu hướng",
 };
 
-export async function generateMetadata({
-  params,
-}: {
+type Props = {
   params: Promise<{ slug: string }>;
-}): Promise<Metadata> {
+  searchParams: { [key: string]: string | string[] | undefined };
+};
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const resolvedParams = await params;
   const title = titles[resolvedParams.slug] || "Trang không tồn tại";
 
@@ -44,24 +30,21 @@ export async function generateMetadata({
   };
 }
 
-export default async function DynamicPage({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
+export default async function DynamicPage({ params }: Props) {
   const resolvedParams = await params;
   const title = titles[resolvedParams.slug] || "Trang không tồn tại";
 
   return (
     <main className="container mx-auto px-4 py-8">
       <h1 className="text-2xl font-bold mb-4">{title}</h1>
+      {/* Page specific content */}
     </main>
   );
 }
 
 // Generate static paths
 export async function generateStaticParams() {
-  return validSlugs.map((slug) => ({
+  return Object.keys(titles).map((slug) => ({
     slug: slug,
   }));
 }
