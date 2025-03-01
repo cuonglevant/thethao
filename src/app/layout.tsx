@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   description:
     "Nơi tổng hợp tin thể thao, bóng đá mới nhất. Cập nhật liên tục 24/7.",
   icons: {
-    icon: "/logo.svg",
+    icon: "/logo.png",
   },
 };
 

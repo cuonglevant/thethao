@@ -1,4 +1,8 @@
 import { Metadata } from "next";
+import { ArticleCard } from "@/components/article-card";
+import { MatchSchedule } from "@/components/match-schedule";
+import { LeagueStandings } from "@/components/league-standings";
+import { TopScorers } from "@/components/top-scorers";
 
 // Get title based on slug
 const titles: { [key: string]: string } = {
@@ -6,13 +10,14 @@ const titles: { [key: string]: string } = {
   "bong-da-viet-nam": "Bóng đá Việt Nam",
   "chuyen-nhuong": "Chuyển nhượng",
   "cup-c1": "Champions League",
-  esport: "Esport",
+  esports: "Esport",
   "lich-thi-dau": "Lịch thi đấu",
   "ngoai-hang-anh": "Ngoại hạng Anh",
   "nhan-dinh": "Nhận định",
   "the-thao": "Thể thao",
   xe: "Xe",
   "xu-huong": "Xu hướng",
+  "ket-qua": "Kết quả bóng đá",
 };
 
 type Props = {
@@ -30,14 +35,230 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
+const matchData = [
+  {
+    date: "01-03-2025",
+    matches: [
+      {
+        time: "18:00",
+        home: { name: "Sông Lam Nghệ An", logo: "/teams/slna.png" },
+        away: { name: "Công An Hà Nội", logo: "/teams/cahn.png" },
+      },
+      {
+        time: "18:00",
+        home: { name: "Bình Định", logo: "/teams/binh-dinh.png" },
+        away: { name: "Bình Dương", logo: "/teams/binh-duong.png" },
+      },
+    ],
+  },
+  {
+    date: "02-03-2025",
+    matches: [
+      {
+        time: "19:15",
+        home: { name: "Hà Nội FC", logo: "/teams/hanoi-fc.png" },
+        away: { name: "Đà Nẵng", logo: "/teams/danang.png" },
+      },
+      {
+        time: "19:15",
+        home: { name: "Hồ Chí Minh", logo: "/teams/hcm.png" },
+        away: { name: "HAGL", logo: "/teams/hagl.png" },
+      },
+    ],
+  },
+];
+
+const standingsData = [
+  {
+    pos: 1,
+    team: "Nam Định",
+    logo: "/teams/nam-dinh.png",
+    played: 15,
+    won: 9,
+    drawn: 3,
+    lost: 3,
+    gd: 16,
+    points: 30,
+  },
+  {
+    pos: 2,
+    team: "Công An Hà Nội",
+    logo: "/teams/cahn.png",
+    played: 15,
+    won: 8,
+    drawn: 4,
+    lost: 3,
+    gd: 12,
+    points: 28,
+  },
+  {
+    pos: 3,
+    team: "Hà Nội FC",
+    logo: "/teams/hanoi-fc.png",
+    played: 15,
+    won: 8,
+    drawn: 3,
+    lost: 4,
+    gd: 8,
+    points: 27,
+  },
+  {
+    pos: 4,
+    team: "Bình Định",
+    logo: "/teams/binh-dinh.png",
+    played: 15,
+    won: 7,
+    drawn: 5,
+    lost: 3,
+    gd: 6,
+    points: 26,
+  },
+  {
+    pos: 5,
+    team: "Sông Lam Nghệ An",
+    logo: "/teams/slna.png",
+    played: 15,
+    won: 7,
+    drawn: 4,
+    lost: 4,
+    gd: 4,
+    points: 25,
+  },
+  {
+    pos: 6,
+    team: "Hồ Chí Minh",
+    logo: "/teams/hcm.png",
+    played: 15,
+    won: 6,
+    drawn: 5,
+    lost: 4,
+    gd: 2,
+    points: 23,
+  },
+  {
+    pos: 7,
+    team: "HAGL",
+    logo: "/teams/hagl.png",
+    played: 15,
+    won: 5,
+    drawn: 4,
+    lost: 6,
+    gd: -2,
+    points: 19,
+  },
+  {
+    pos: 8,
+    team: "Đà Nẵng",
+    logo: "/teams/danang.png",
+    played: 15,
+    won: 4,
+    drawn: 5,
+    lost: 6,
+    gd: -4,
+    points: 17,
+  },
+  {
+    pos: 9,
+    team: "Bình Dương",
+    logo: "/teams/binh-duong.png",
+    played: 15,
+    won: 3,
+    drawn: 4,
+    lost: 8,
+    gd: -8,
+    points: 13,
+  },
+];
+
+const topScorersData = [
+  {
+    pos: 1,
+    name: "Nguyễn Tiến Linh",
+    team: "Bình Dương",
+    teamLogo: "/teams/binh-duong.png",
+    goals: 10,
+    photo: "/players/tien-linh.jpg",
+  },
+  {
+    pos: 2,
+    name: "Alan Grafite",
+    team: "Công An Hà Nội",
+    teamLogo: "/teams/cahn.png",
+    goals: 8,
+    photo: "/players/grafite.jpg",
+  },
+  {
+    pos: 3,
+    name: "Leo Artur",
+    team: "Công An Hà Nội",
+    teamLogo: "/teams/cahn.png",
+    goals: 7,
+    photo: "/players/leo-artur.jpg",
+  },
+  {
+    pos: 3,
+    name: "Goncalves da Silva",
+    team: "Nam Định",
+    teamLogo: "/teams/nam-dinh.png",
+    goals: 7,
+    photo: "/players/goncalves.jpg",
+  },
+  {
+    pos: 3,
+    name: "Bezerra R.",
+    team: "Nam Định",
+    teamLogo: "/teams/nam-dinh.png",
+    goals: 7,
+    photo: "/players/bezerra.jpg",
+  },
+];
+
 export default async function DynamicPage({ params }: Props) {
   const resolvedParams = await params;
   const title = titles[resolvedParams.slug] || "Trang không tồn tại";
-
   return (
-    <main className="container mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold mb-4">{title}</h1>
-      {/* Page specific content */}
+    <main className="container mx-auto px-4 py-4 sm:py-6 lg:py-8">
+      <div className="text-2xl font-bold mb-4">{title}</div>
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 lg:gap-8">
+        {/* Left column - 8 columns on large screens, full width on mobile */}
+        <div className="lg:col-span-8 space-y-4 sm:space-y-6">
+          {/* Featured Article */}
+          <ArticleCard
+            image="/phu-dong.jpg"
+            title="Hoàng Đức cùng Phù Đổng có cơ hội vang danh toàn cầu"
+            description="Chiến thắng trước Trẻ TP.HCM đã giúp Phù Đổng Ninh Bình tạo nên một thành tích ấn tượng tại giải hạng Nhất Quốc gia."
+            imageHeight="h-[280px]"
+            titleSize="xl"
+            showDescription={true}
+            isFeatured={true}
+          />
+
+          {/* Grid of smaller articles */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+            <ArticleCard
+              image="/hanoi-vs-danang.jpg"
+              title="Hà Nội vs Đà Nẵng: Chủ nhà cửa trên"
+            />
+            <ArticleCard
+              image="/tien-linh.jpg"
+              title="Báo Thái Lan so sánh QBV Tiến Linh với 2 huyền thoại"
+            />
+            <ArticleCard
+              image="/u20-asia.jpg"
+              title="Lịch thi đấu U20 châu Á 2025 hôm nay 1/3 - CHUNG KẾT"
+            />
+          </div>
+
+          {/* Match Schedule */}
+          <MatchSchedule matchDays={matchData} />
+        </div>
+
+        {/* Right column - 4 columns on large screens, full width on mobile */}
+        <div className="lg:col-span-4 space-y-4 sm:space-y-6">
+          <LeagueStandings teams={standingsData} />
+          <TopScorers scorers={topScorersData} />
+        </div>
+      </div>
     </main>
   );
 }
