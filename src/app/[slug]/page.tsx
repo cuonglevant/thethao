@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { ArticleCard } from "@/components/article-card";
 import { MatchSchedule } from "@/components/ui/match-schedule";
 import { LeagueStandings } from "@/components/ui/league-standings";
 import { TopScorer } from "@/components/ui/top-scorer";
-
+import { GridFeatureArticle } from "@/components/ui/grid-feature-article";
+import { GridArticle } from "@/components/ui/grid-article";
 // Force static generation
 export const dynamic = "error";
 export const dynamicParams = false;
@@ -24,6 +24,9 @@ const titles = {
   xe: "Xe",
   "xu-huong": "Xu hướng",
   "ket-qua": "Kết quả bóng đá",
+  latest: "Latest",
+  highlight: "Highlight",
+  livescore: "Livescore",
 } as const;
 
 type Slug = keyof typeof titles;
@@ -290,32 +293,34 @@ export default async function Page({ params }: PageProps) {
         {/* Left column - 8 columns on large screens, full width on mobile */}
         <div className="lg:col-span-8 space-y-4 sm:space-y-6">
           {/* Featured Article */}
-          <ArticleCard
+
+          <GridFeatureArticle
             image="/phu-dong.jpg"
             title="Hoàng Đức cùng Phù Đổng có cơ hội vang danh toàn cầu"
+            href="/phu-dong"
             description="Chiến thắng trước Trẻ TP.HCM đã giúp Phù Đổng Ninh Bình tạo nên một thành tích ấn tượng tại giải hạng Nhất Quốc gia."
-            imageHeight="h-[280px]"
-            titleSize="xl"
-            showDescription={true}
-            isFeatured={true}
           />
-
           {/* Grid of smaller articles */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-            <ArticleCard
-              image="/hanoi-vs-danang.jpg"
-              title="Hà Nội vs Đà Nẵng: Chủ nhà cửa trên"
+            <GridArticle
+              image="/phu-dong.jpg"
+              title="Hoàng Đức cùng Phù Đổng có cơ hội vang danh toàn cầu"
+              href="/phu-dong"
+              description="Chiến thắng trước Trẻ TP.HCM đã giúp Phù Đổng Ninh Bình tạo nên một thành tích ấn tượng tại giải hạng Nhất Quốc gia."
             />
-            <ArticleCard
-              image="/tien-linh.jpg"
-              title="Báo Thái Lan so sánh QBV Tiến Linh với 2 huyền thoại"
+            <GridArticle
+              image="/phu-dong.jpg"
+              title="Hoàng Đức cùng Phù Đổng có cơ hội vang danh toàn cầu"
+              href="/phu-dong"
+              description="Chiến thắng trước Trẻ TP.HCM đã giúp Phù Đổng Ninh Bình tạo nên một thành tích ấn tượng tại giải hạng Nhất Quốc gia."
             />
-            <ArticleCard
-              image="/u20-asia.jpg"
-              title="Lịch thi đấu U20 châu Á 2025 hôm nay 1/3 - CHUNG KẾT"
+            <GridArticle
+              image="/phu-dong.jpg"
+              title="Hoàng Đức cùng Phù Đổng có cơ hội vang danh toàn cầu"
+              href="/phu-dong"
+              description="Chiến thắng trước Trẻ TP.HCM đã giúp Phù Đổng Ninh Bình tạo nên một thành tích ấn tượng tại giải hạng Nhất Quốc gia."
             />
           </div>
-
           {/* Match Schedule */}
           <MatchSchedule matchDays={matchData} />
         </div>

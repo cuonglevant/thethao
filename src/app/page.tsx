@@ -4,6 +4,7 @@ import { MainContent } from "@/components/ui/main-content";
 import { MatchSchedule } from "@/components/ui/match-schedule";
 import { LeagueStandings } from "@/components/ui/league-standings";
 import { TopScorer } from "@/components/ui/top-scorer";
+import LatestPage from "./latest/page";
 
 export default function Home() {
   return (
@@ -36,7 +37,7 @@ export default function Home() {
 
         {/* Grid Articles */}
         <div className="bg-white rounded shadow p-4">
-          <MainContent.Grid />
+          <LatestPage />
         </div>
       </main>
     </div>

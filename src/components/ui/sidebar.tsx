@@ -3,6 +3,7 @@
 import { NavItem } from "./nav-item";
 import { LeagueItem } from "./league-item";
 import Image from "next/image";
+import { useState, useRef, useEffect } from "react";
 
 const navigationItems = [
   {
@@ -19,8 +20,8 @@ const navigationItems = [
     ),
   },
   {
-    href: "/video",
-    label: "VIDEO",
+    href: "/highlight",
+    label: "HIGHLIGHT",
     icon: (
       <svg
         className="w-5 h-5 text-red-500"
@@ -185,20 +186,96 @@ const leagueItems = [
 ];
 
 export function Sidebar() {
+  const [isDragging, setIsDragging] = useState(false);
+  const [scrollPosition, setScrollPosition] = useState(0);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  const handleScroll = () => {
+    if (contentRef.current && containerRef.current) {
+      const { scrollTop, scrollHeight, clientHeight } = contentRef.current;
+      const scrollPercentage =
+        (scrollTop / (scrollHeight - clientHeight)) * 100;
+      setScrollPosition(scrollPercentage);
+    }
+  };
+
+  const handleMouseDown = () => {
+    setIsDragging(true);
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
+  };
+
+  const handleMouseMove = (e: MouseEvent) => {
+    if (!isDragging || !containerRef.current || !contentRef.current) return;
+
+    const { top, height } = containerRef.current.getBoundingClientRect();
+    const scrollableHeight =
+      contentRef.current.scrollHeight - contentRef.current.clientHeight;
+    const percentage = Math.max(
+      0,
+      Math.min(100, ((e.clientY - top) / height) * 100)
+    );
+
+    contentRef.current.scrollTop = (percentage / 100) * scrollableHeight;
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+    document.removeEventListener("mousemove", handleMouseMove);
+    document.removeEventListener("mouseup", handleMouseUp);
+  };
+
+  useEffect(() => {
+    const content = contentRef.current;
+    if (content) {
+      content.addEventListener("scroll", handleScroll);
+      return () => content.removeEventListener("scroll", handleScroll);
+    }
+  }, []);
+
   return (
-    <div className="bg-white rounded shadow h-[850px] overflow-y-auto">
-      {/* Top Navigation */}
-      <div className="border-b">
-        {navigationItems.map((item) => (
-          <NavItem key={item.href} {...item} />
-        ))}
+    <div
+      ref={containerRef}
+      className="relative bg-white rounded shadow h-[850px] overflow-hidden group"
+    >
+      {/* Main sidebar content */}
+      <div ref={contentRef} className="h-full overflow-y-auto scrollbar-hide">
+        {/* Top Navigation */}
+        <div className="border-b">
+          {navigationItems.map((item) => (
+            <NavItem key={item.href} {...item} />
+          ))}
+        </div>
+
+        {/* League Navigation */}
+        <div className="py-2">
+          {leagueItems.map((item) => (
+            <LeagueItem key={item.href} {...item} />
+          ))}
+        </div>
       </div>
 
-      {/* League Navigation */}
-      <div className="py-2">
-        {leagueItems.map((item) => (
-          <LeagueItem key={item.href} {...item} />
-        ))}
+      {/* Custom scrollbar that appears on hover */}
+      <div
+        className={`
+          absolute top-0 right-0 w-2 h-full bg-gray-100 opacity-0
+          group-hover:opacity-100 transition-opacity duration-300
+        `}
+      >
+        <div
+          className={`
+            absolute right-0 w-full bg-gray-400 rounded-full transition-all duration-150
+            hover:bg-gray-500 ${isDragging ? "bg-gray-600" : ""}
+          `}
+          style={{
+            height: "100px",
+            top: `${scrollPosition}%`,
+            transform: "translateY(-50%)",
+            cursor: "pointer",
+          }}
+          onMouseDown={handleMouseDown}
+        />
       </div>
     </div>
   );
