@@ -1,95 +1,23 @@
 import Image from "next/image";
+import { Team } from "@/types/teamTypes";
 
-type Team = {
+type StandingTeam = Team & {
   position: number;
-  team: {
-    name: string;
-    logo: string;
-  };
   played: number;
   won: number;
   drawn: number;
   lost: number;
   gd?: number;
-  points: number;
 };
-
-const defaultTeams: Team[] = [
-  {
-    position: 1,
-    team: {
-      name: "Nam Định",
-      logo: "/placeholder.svg?height=32&width=32",
-    },
-    played: 15,
-    won: 11,
-    drawn: 2,
-    lost: 2,
-    gd: 12,
-    points: 35,
-  },
-  {
-    position: 2,
-    team: {
-      name: "Hà Nội FC",
-      logo: "/placeholder.svg?height=32&width=32",
-    },
-    played: 15,
-    won: 9,
-    drawn: 3,
-    lost: 3,
-    gd: 8,
-    points: 30,
-  },
-  {
-    position: 3,
-    team: {
-      name: "Thanh Hóa",
-      logo: "/placeholder.svg?height=32&width=32",
-    },
-    played: 15,
-    won: 8,
-    drawn: 4,
-    lost: 3,
-    gd: 6,
-    points: 28,
-  },
-  {
-    position: 4,
-    team: {
-      name: "Viettel",
-      logo: "/placeholder.svg?height=32&width=32",
-    },
-    played: 15,
-    won: 8,
-    drawn: 3,
-    lost: 4,
-    gd: 4,
-    points: 27,
-  },
-  {
-    position: 5,
-    team: {
-      name: "HAGL",
-      logo: "/placeholder.svg?height=32&width=32",
-    },
-    played: 15,
-    won: 7,
-    drawn: 4,
-    lost: 4,
-    gd: 2,
-    points: 25,
-  },
-];
 
 interface LeagueStandingsProps {
   title?: string;
-  teams?: Team[];
+  teams: StandingTeam[];
 }
 
 export function LeagueStandings({
   title = "BẢNG XẾP HẠNG V-LEAGUE 2024",
-  teams = defaultTeams,
+  teams,
 }: LeagueStandingsProps) {
   return (
     <div className="bg-white rounded shadow overflow-hidden">
@@ -128,14 +56,14 @@ export function LeagueStandings({
                 <td className="py-2">
                   <div className="flex items-center gap-2">
                     <Image
-                      src={team.team.logo}
-                      alt={team.team.name}
+                      src={team.logo}
+                      alt={team.name}
                       width={20}
                       height={20}
                       className="w-5 h-5"
                     />
                     <span className="text-sm font-medium truncate max-w-[120px] sm:max-w-[150px]">
-                      {team.team.name}
+                      {team.name}
                     </span>
                   </div>
                 </td>

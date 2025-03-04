@@ -272,7 +272,7 @@ export default function MatchSchedulePage() {
         </h1>
         <div className="flex items-center">
           <span className="text-gray-600 mr-2">
-            {formatTime(new Date())} (GMT+7)
+            {formatTime(new Date())} Giờ Việt Nam (GMT+7)
           </span>
         </div>
       </div>

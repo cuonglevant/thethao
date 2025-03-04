@@ -5,18 +5,17 @@ import { Props } from "./article-card";
 type GridFeatureArticleProps = Props;
 
 export function GridFeatureArticle({
-  image,
+  media,
   title,
-  href = "#",
-  description,
-}: // time,
-GridFeatureArticleProps) {
+  content,
+  slug,
+}: GridFeatureArticleProps) {
   return (
-    <Link href={href}>
+    <Link href={`/bai-viet/${slug}`}>
       <article className="flex gap-6 items-start bg-gray-50 rounded-lg overflow-hidden group h-[180px]">
         <div className="relative flex-shrink-0">
           <Image
-            src={image}
+            src={media[0]?.mediaURL || "/placeholder.jpg"}
             alt={title}
             width={300}
             height={180}
@@ -27,11 +26,9 @@ GridFeatureArticleProps) {
           <h2 className="text-xl font-bold group-hover:text-blue-600">
             {title}
           </h2>
-          {description && (
-            <p className="text-gray-600 mt-2 text-base leading-relaxed line-clamp-2">
-              {description}
-            </p>
-          )}
+          <p className="text-gray-600 mt-2 text-base leading-relaxed line-clamp-2">
+            {content}
+          </p>
         </div>
       </article>
     </Link>

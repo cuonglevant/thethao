@@ -73,7 +73,7 @@ const navigationItems = [
     ),
   },
   {
-    href: "/bxh",
+    href: "/ranking",
     label: "BXH",
     icon: (
       <svg

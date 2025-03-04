@@ -27,6 +27,8 @@ const titles = {
   latest: "Latest",
   highlight: "Highlight",
   livescore: "Livescore",
+  ranking: "Bảng xếp hạng",
+  "truc-tiep": "Trực tiếp",
 } as const;
 
 type Slug = keyof typeof titles;
@@ -88,121 +90,166 @@ const matchData = [
 
 const standingsData = [
   {
-    position: 1,
-    team: {
-      name: "Nam Định",
-      logo: "/teams/nam-dinh.png",
+    _id: "1",
+    name: "Nam Định",
+    slug: "nam-dinh",
+    description: "Nam Định FC",
+    league: {
+      _id: "1",
+      name: "V-League",
+      slug: "v-league",
+      description: "",
+      logo: "/leagues/vleague1.png",
+      nation: {
+        _id: "1",
+        name: "Việt Nam",
+        flag: "",
+        slug: "viet-nam",
+        league: [],
+      },
+      matches: [],
     },
+    points: 30,
+    category: {
+      _id: "1",
+      name: "Bóng đá",
+      description: "",
+      slug: "bong-da",
+      nation: {
+        _id: "1",
+        name: "Việt Nam",
+        flag: "",
+        slug: "viet-nam",
+        league: [],
+      },
+      matches: [],
+    },
+    media: [],
+    player: [],
+    nation: {
+      _id: "1",
+      name: "Việt Nam",
+      flag: "",
+      slug: "viet-nam",
+      league: [],
+    },
+    flag: "",
+    shortName: "ND",
+    logo: "/teams/nam-dinh.png",
+    position: 1,
     played: 15,
     won: 9,
     drawn: 3,
     lost: 3,
     gd: 16,
-    points: 30,
   },
   {
-    position: 2,
-    team: {
-      name: "Công An Hà Nội",
-      logo: "/teams/cahn.png",
+    _id: "2",
+    name: "Công An Hà Nội",
+    slug: "cong-an-ha-noi",
+    description: "Công An Hà Nội FC",
+    league: {
+      _id: "1",
+      name: "V-League",
+      slug: "v-league",
+      description: "",
+      logo: "/leagues/vleague1.png",
+      nation: {
+        _id: "1",
+        name: "Việt Nam",
+        flag: "",
+        slug: "viet-nam",
+        league: [],
+      },
+      matches: [],
     },
+    points: 28,
+    category: {
+      _id: "1",
+      name: "Bóng đá",
+      description: "",
+      slug: "bong-da",
+      nation: {
+        _id: "1",
+        name: "Việt Nam",
+        flag: "",
+        slug: "viet-nam",
+        league: [],
+      },
+      matches: [],
+    },
+    media: [],
+    player: [],
+    nation: {
+      _id: "1",
+      name: "Việt Nam",
+      flag: "",
+      slug: "viet-nam",
+      league: [],
+    },
+    flag: "",
+    shortName: "CAHN",
+    logo: "/teams/cahn.png",
+    position: 2,
     played: 15,
     won: 8,
     drawn: 4,
     lost: 3,
     gd: 12,
-    points: 28,
   },
   {
-    position: 3,
-    team: {
-      name: "Hà Nội FC",
-      logo: "/teams/hanoi-fc.png",
+    _id: "3",
+    name: "Hà Nội FC",
+    slug: "ha-noi-fc",
+    description: "Hà Nội FC",
+    league: {
+      _id: "1",
+      name: "V-League",
+      slug: "v-league",
+      description: "",
+      logo: "/leagues/vleague1.png",
+      nation: {
+        _id: "1",
+        name: "Việt Nam",
+        flag: "",
+        slug: "viet-nam",
+        league: [],
+      },
+      matches: [],
     },
+    points: 27,
+    category: {
+      _id: "1",
+      name: "Bóng đá",
+      description: "",
+      slug: "bong-da",
+      nation: {
+        _id: "1",
+        name: "Việt Nam",
+        flag: "",
+        slug: "viet-nam",
+        league: [],
+      },
+      matches: [],
+    },
+    media: [],
+    player: [],
+    nation: {
+      _id: "1",
+      name: "Việt Nam",
+      flag: "",
+      slug: "viet-nam",
+      league: [],
+    },
+    flag: "",
+    shortName: "HNFC",
+    logo: "/teams/hanoi-fc.png",
+    position: 3,
     played: 15,
     won: 8,
     drawn: 3,
     lost: 4,
     gd: 8,
-    points: 27,
-  },
-  {
-    position: 4,
-    team: {
-      name: "Bình Định",
-      logo: "/teams/binh-dinh.png",
-    },
-    played: 15,
-    won: 7,
-    drawn: 5,
-    lost: 3,
-    gd: 6,
-    points: 26,
-  },
-  {
-    position: 5,
-    team: {
-      name: "Sông Lam Nghệ An",
-      logo: "/teams/slna.png",
-    },
-    played: 15,
-    won: 7,
-    drawn: 4,
-    lost: 4,
-    gd: 4,
-    points: 25,
-  },
-  {
-    position: 6,
-    team: {
-      name: "Hồ Chí Minh",
-      logo: "/teams/hcm.png",
-    },
-    played: 15,
-    won: 6,
-    drawn: 5,
-    lost: 4,
-    gd: 2,
-    points: 23,
-  },
-  {
-    position: 7,
-    team: {
-      name: "HAGL",
-      logo: "/teams/hagl.png",
-    },
-    played: 15,
-    won: 5,
-    drawn: 4,
-    lost: 6,
-    gd: -2,
-    points: 19,
-  },
-  {
-    position: 8,
-    team: {
-      name: "Đà Nẵng",
-      logo: "/teams/danang.png",
-    },
-    played: 15,
-    won: 4,
-    drawn: 5,
-    lost: 6,
-    gd: -4,
-    points: 17,
-  },
-  {
-    position: 9,
-    team: {
-      name: "Bình Dương",
-      logo: "/teams/binh-duong.png",
-    },
-    played: 15,
-    won: 3,
-    drawn: 4,
-    lost: 8,
-    gd: -8,
-    points: 13,
   },
 ];
 
@@ -293,32 +340,175 @@ export default async function Page({ params }: PageProps) {
         {/* Left column - 8 columns on large screens, full width on mobile */}
         <div className="lg:col-span-8 space-y-4 sm:space-y-6">
           {/* Featured Article */}
-
           <GridFeatureArticle
-            image="/phu-dong.jpg"
+            media={[
+              {
+                _id: "1",
+                mediaType: "image",
+                mediaURL: "/phu-dong.jpg",
+                mediaCaption: "Phù Đổng",
+              },
+            ]}
             title="Hoàng Đức cùng Phù Đổng có cơ hội vang danh toàn cầu"
-            href="/phu-dong"
+            content="Chiến thắng trước Trẻ TP.HCM đã giúp Phù Đổng Ninh Bình tạo nên một thành tích ấn tượng tại giải hạng Nhất Quốc gia."
             description="Chiến thắng trước Trẻ TP.HCM đã giúp Phù Đổng Ninh Bình tạo nên một thành tích ấn tượng tại giải hạng Nhất Quốc gia."
+            slug="phu-dong"
+            publishDate={new Date()}
+            author={[
+              {
+                _id: "1",
+                username: "Admin",
+                dob: new Date(),
+                email: "admin@example.com",
+                password: "hashed_password",
+                phoneNumber: "0123456789",
+                idCard: "123456789",
+                userImage: "/avatars/admin.jpg",
+              },
+            ]}
+            category={{
+              _id: "1",
+              name: "Bóng đá",
+              description: "",
+              slug: "bong-da",
+              nation: {
+                _id: "1",
+                name: "Việt Nam",
+                flag: "",
+                slug: "viet-nam",
+                league: [],
+              },
+              matches: [],
+            }}
+            numOfViews={0}
           />
           {/* Grid of smaller articles */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             <GridArticle
-              image="/phu-dong.jpg"
+              media={[
+                {
+                  _id: "1",
+                  mediaType: "image",
+                  mediaURL: "/phu-dong.jpg",
+                  mediaCaption: "Phù Đổng",
+                },
+              ]}
               title="Hoàng Đức cùng Phù Đổng có cơ hội vang danh toàn cầu"
-              href="/phu-dong"
+              content="Chiến thắng trước Trẻ TP.HCM đã giúp Phù Đổng Ninh Bình tạo nên một thành tích ấn tượng tại giải hạng Nhất Quốc gia."
               description="Chiến thắng trước Trẻ TP.HCM đã giúp Phù Đổng Ninh Bình tạo nên một thành tích ấn tượng tại giải hạng Nhất Quốc gia."
+              slug="phu-dong"
+              publishDate={new Date()}
+              author={[
+                {
+                  _id: "1",
+                  username: "Admin",
+                  dob: new Date(),
+                  email: "admin@example.com",
+                  password: "hashed_password",
+                  phoneNumber: "0123456789",
+                  idCard: "123456789",
+                  userImage: "/avatars/admin.jpg",
+                },
+              ]}
+              category={{
+                _id: "1",
+                name: "Bóng đá",
+                description: "",
+                slug: "bong-da",
+                nation: {
+                  _id: "1",
+                  name: "Việt Nam",
+                  flag: "",
+                  slug: "viet-nam",
+                  league: [],
+                },
+                matches: [],
+              }}
+              numOfViews={0}
             />
             <GridArticle
-              image="/phu-dong.jpg"
+              media={[
+                {
+                  _id: "1",
+                  mediaType: "image",
+                  mediaURL: "/phu-dong.jpg",
+                  mediaCaption: "Phù Đổng",
+                },
+              ]}
               title="Hoàng Đức cùng Phù Đổng có cơ hội vang danh toàn cầu"
-              href="/phu-dong"
+              content="Chiến thắng trước Trẻ TP.HCM đã giúp Phù Đổng Ninh Bình tạo nên một thành tích ấn tượng tại giải hạng Nhất Quốc gia."
               description="Chiến thắng trước Trẻ TP.HCM đã giúp Phù Đổng Ninh Bình tạo nên một thành tích ấn tượng tại giải hạng Nhất Quốc gia."
+              slug="phu-dong"
+              publishDate={new Date()}
+              author={[
+                {
+                  _id: "1",
+                  username: "Admin",
+                  dob: new Date(),
+                  email: "admin@example.com",
+                  password: "hashed_password",
+                  phoneNumber: "0123456789",
+                  idCard: "123456789",
+                  userImage: "/avatars/admin.jpg",
+                },
+              ]}
+              category={{
+                _id: "1",
+                name: "Bóng đá",
+                description: "",
+                slug: "bong-da",
+                nation: {
+                  _id: "1",
+                  name: "Việt Nam",
+                  flag: "",
+                  slug: "viet-nam",
+                  league: [],
+                },
+                matches: [],
+              }}
+              numOfViews={0}
             />
             <GridArticle
-              image="/phu-dong.jpg"
+              media={[
+                {
+                  _id: "1",
+                  mediaType: "image",
+                  mediaURL: "/phu-dong.jpg",
+                  mediaCaption: "Phù Đổng",
+                },
+              ]}
               title="Hoàng Đức cùng Phù Đổng có cơ hội vang danh toàn cầu"
-              href="/phu-dong"
+              content="Chiến thắng trước Trẻ TP.HCM đã giúp Phù Đổng Ninh Bình tạo nên một thành tích ấn tượng tại giải hạng Nhất Quốc gia."
               description="Chiến thắng trước Trẻ TP.HCM đã giúp Phù Đổng Ninh Bình tạo nên một thành tích ấn tượng tại giải hạng Nhất Quốc gia."
+              slug="phu-dong"
+              publishDate={new Date()}
+              author={[
+                {
+                  _id: "1",
+                  username: "Admin",
+                  dob: new Date(),
+                  email: "admin@example.com",
+                  password: "hashed_password",
+                  phoneNumber: "0123456789",
+                  idCard: "123456789",
+                  userImage: "/avatars/admin.jpg",
+                },
+              ]}
+              category={{
+                _id: "1",
+                name: "Bóng đá",
+                description: "",
+                slug: "bong-da",
+                nation: {
+                  _id: "1",
+                  name: "Việt Nam",
+                  flag: "",
+                  slug: "viet-nam",
+                  league: [],
+                },
+                matches: [],
+              }}
+              numOfViews={0}
             />
           </div>
           {/* Match Schedule */}

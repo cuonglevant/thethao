@@ -9,66 +9,110 @@ export const metadata: Metadata = {
   description: "Tin tức thể thao mới nhất, cập nhật liên tục 24/7",
 };
 
-type Article = Omit<ArticleProps, "time"> & {
-  timestamp: string;
-};
-
-const getRelativeTime = (timestamp: string): string => {
-  const diff = Date.now() - new Date(timestamp).getTime();
-  const minutes = Math.floor(diff / 60000);
-  const hours = Math.floor(minutes / 60);
-  const days = Math.floor(hours / 24);
-
-  if (days > 0) return `${days} ngày trước`;
-  if (hours > 0) return `${hours} giờ trước`;
-  return `${minutes} phút trước`;
-};
-
-const articles: Article[] = [
+const articles: ArticleProps[] = [
   {
-    timestamp: "2025-03-03T02:45:00Z",
     title: "Lịch thi đấu vòng 1/8 cúp C1 mới nhất",
+    content:
+      "(Lịch thi đấu bóng đá) Vòng 1/8 cúp C1 chính thức khởi tranh từ ngày 5/3 tới đây với các cặp đấu hấp dẫn của Real Madrid, Barca và Liverpool...",
     description:
       "(Lịch thi đấu bóng đá) Vòng 1/8 cúp C1 chính thức khởi tranh từ ngày 5/3 tới đây với các cặp đấu hấp dẫn của Real Madrid, Barca và Liverpool...",
-    image: "/champions-league.jpg",
-    href: "/latest/lich-thi-dau-vong-1-8-cup-c1",
+    publishDate: new Date("2025-03-03T02:45:00Z"),
+    media: [
+      {
+        _id: "1",
+        mediaCaption: "Champions League",
+        mediaType: "image",
+        mediaURL: "/champions-league.jpg",
+      },
+    ],
+    author: [
+      {
+        _id: "1",
+        username: "Admin",
+        dob: new Date("1990-01-01"),
+        email: "admin@example.com",
+        password: "hashed_password",
+        phoneNumber: "0123456789",
+        idCard: "123456789",
+        userImage: "/avatars/admin.jpg",
+      },
+    ],
+    category: {
+      _id: "1",
+      name: "Bóng đá",
+      description: "",
+      slug: "bong-da",
+      nation: {
+        _id: "1",
+        name: "Việt Nam",
+        flag: "",
+        slug: "viet-nam",
+        league: [],
+      },
+      matches: [],
+    },
+    numOfViews: 0,
+    slug: "lich-thi-dau-vong-1-8-cup-c1",
   },
   {
-    timestamp: "2025-03-03T02:30:00Z",
     title: "Lịch thi đấu vòng 1/8 cúp C1 mới nhất",
+    content:
+      "(Lịch thi đấu bóng đá) Vòng 1/8 cúp C1 chính thức khởi tranh từ ngày 5/3 tới đây với các cặp đấu hấp dẫn của Real Madrid, Barca và Liverpool...",
     description:
       "(Lịch thi đấu bóng đá) Vòng 1/8 cúp C1 chính thức khởi tranh từ ngày 5/3 tới đây với các cặp đấu hấp dẫn của Real Madrid, Barca và Liverpool...",
-    image: "/champions-league.jpg",
-    href: "/latest/lich-thi-dau-vong-1-8-cup-c1",
+    publishDate: new Date("2025-03-03T02:30:00Z"),
+    media: [
+      {
+        _id: "1",
+        mediaCaption: "Champions League",
+        mediaType: "image",
+        mediaURL: "/champions-league.jpg",
+      },
+    ],
+    author: [
+      {
+        _id: "1",
+        username: "Admin",
+        dob: new Date("1990-01-01"),
+        email: "admin@example.com",
+        password: "hashed_password",
+        phoneNumber: "0123456789",
+        idCard: "123456789",
+        userImage: "/avatars/admin.jpg",
+      },
+    ],
+    category: {
+      _id: "1",
+      name: "Bóng đá",
+      description: "",
+      slug: "bong-da",
+      nation: {
+        _id: "1",
+        name: "Việt Nam",
+        flag: "",
+        slug: "viet-nam",
+        league: [],
+      },
+      matches: [],
+    },
+    numOfViews: 0,
+    slug: "lich-thi-dau-vong-1-8-cup-c1",
   },
-  {
-    timestamp: "2025-03-03T02:15:00Z",
-    title: "Lịch thi đấu vòng 1/8 cúp C1 mới nhất",
-    description:
-      "(Lịch thi đấu bóng đá) Vòng 1/8 cúp C1 chính thức khởi tranh từ ngày 5/3 tới đây với các cặp đấu hấp dẫn của Real Madrid, Barca và Liverpool...",
-    image: "/champions-league.jpg",
-    href: "/latest/lich-thi-dau-vong-1-8-cup-c1",
-  },
-  // Add more articles here
 ];
 
-const sortByTimestamp = (articles: Article[]) => {
-  return [...articles].sort((a, b) => {
-    return new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime();
-  });
+const sortByDate = (articles: ArticleProps[]) => {
+  return [...articles].sort(
+    (a, b) => b.publishDate.getTime() - a.publishDate.getTime()
+  );
 };
 
 export default function LatestPage() {
-  const sortedArticles = sortByTimestamp(articles);
+  const sortedArticles = sortByDate(articles);
 
   return (
     <div className="space-y-6">
       {sortedArticles.map((article, index) => (
-        <ArticleCard
-          key={index}
-          {...article}
-          time={getRelativeTime(article.timestamp)}
-        />
+        <ArticleCard key={index} {...article} />
       ))}
     </div>
   );

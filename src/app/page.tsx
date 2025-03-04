@@ -6,6 +6,99 @@ import { LeagueStandings } from "@/components/ui/league-standings";
 import { TopScorer } from "@/components/ui/top-scorer";
 import LatestPage from "./latest/page";
 
+const standingsData = [
+  {
+    _id: "1",
+    name: "Nam Định",
+    slug: "nam-dinh",
+    description: "Nam Định FC",
+    league: {
+      _id: "1",
+      name: "V-League",
+      slug: "v-league",
+      logo: "/leagues/vleague1.png",
+    },
+    points: 30,
+    category: {
+      _id: "1",
+      name: "Bóng đá",
+      description: "",
+      slug: "bong-da",
+      nation: {
+        _id: "1",
+        name: "Việt Nam",
+        flag: "",
+        slug: "viet-nam",
+        league: [],
+      },
+      matches: [],
+    },
+    media: [],
+    player: [],
+    nation: {
+      _id: "1",
+      name: "Việt Nam",
+      flag: "",
+      slug: "viet-nam",
+      league: [],
+    },
+    flag: "",
+    shortName: "ND",
+    logo: "/teams/nam-dinh.png",
+    position: 1,
+    played: 15,
+    won: 9,
+    drawn: 3,
+    lost: 3,
+    gd: 16,
+  },
+  {
+    _id: "2",
+    name: "Công An Hà Nội",
+    slug: "cong-an-ha-noi",
+    description: "Công An Hà Nội FC",
+    league: {
+      _id: "1",
+      name: "V-League",
+      slug: "v-league",
+      logo: "/leagues/vleague1.png",
+    },
+    points: 28,
+    category: {
+      _id: "1",
+      name: "Bóng đá",
+      description: "",
+      slug: "bong-da",
+      nation: {
+        _id: "1",
+        name: "Việt Nam",
+        flag: "",
+        slug: "viet-nam",
+        league: [],
+      },
+      matches: [],
+    },
+    media: [],
+    player: [],
+    nation: {
+      _id: "1",
+      name: "Việt Nam",
+      flag: "",
+      slug: "viet-nam",
+      league: [],
+    },
+    flag: "",
+    shortName: "CAHN",
+    logo: "/teams/cahn.png",
+    position: 2,
+    played: 15,
+    won: 8,
+    drawn: 4,
+    lost: 3,
+    gd: 12,
+  },
+];
+
 export default function Home() {
   return (
     <div className="min-h-screen bg-gray-100">
@@ -24,14 +117,14 @@ export default function Home() {
             <MatchSchedule />
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <TopScorer />
-              <LeagueStandings />
+              <LeagueStandings teams={standingsData} />
             </div>
           </div>
 
           {/* Right Sidebar */}
           <div className="space-y-4">
             <RightSidebar />
-            <LeagueStandings />
+            <LeagueStandings teams={standingsData} />
           </div>
         </div>
 

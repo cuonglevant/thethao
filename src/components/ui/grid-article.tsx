@@ -4,13 +4,13 @@ import { Props } from "./article-card";
 
 type GridArticleProps = Props;
 
-export function GridArticle({ image, title, href = "#" }: GridArticleProps) {
+export function GridArticle({ media, title, slug }: GridArticleProps) {
   return (
     <article className="space-y-3">
-      <Link href={href} className="block">
+      <Link href={`/bai-viet/${slug}`} className="block">
         <div className="relative aspect-[4/3] overflow-hidden">
           <Image
-            src={image}
+            src={media[0]?.mediaURL || "/placeholder.jpg"}
             alt={title}
             fill
             className="object-cover hover:scale-105 transition-transform duration-300"

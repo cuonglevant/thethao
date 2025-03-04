@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { SelectedDateContext } from "./context";
 
 const DAYS = [
@@ -13,6 +13,27 @@ const DAYS = [
   "Thứ sáu",
   "Thứ bảy",
 ];
+
+function useWindowSize() {
+  const [windowSize, setWindowSize] = useState({
+    width: typeof window !== "undefined" ? window.innerWidth : 0,
+  });
+
+  useEffect(() => {
+    function handleResize() {
+      setWindowSize({
+        width: window.innerWidth,
+      });
+    }
+
+    window.addEventListener("resize", handleResize);
+    handleResize();
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  return windowSize;
+}
 
 const getWeekDates = (currentDate: Date, today: Date) => {
   const dates = [];
@@ -41,10 +62,38 @@ export default function MatchScheduleLayout({
 }) {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const today = useMemo(() => new Date(), []);
+  const { width } = useWindowSize();
   const weekDates = useMemo(
     () => getWeekDates(selectedDate, today),
     [selectedDate, today]
   );
+
+  const handlePrevDay = () => {
+    setSelectedDate(new Date(selectedDate.setDate(selectedDate.getDate() - 1)));
+  };
+
+  const handleNextDay = () => {
+    setSelectedDate(new Date(selectedDate.setDate(selectedDate.getDate() + 1)));
+  };
+
+  const visibleDates = useMemo(() => {
+    if (width >= 640) {
+      // sm breakpoint
+      return weekDates;
+    }
+
+    // Find the index of the selected date
+    const selectedIndex = weekDates.findIndex(
+      (date) => date.date.toDateString() === selectedDate.toDateString()
+    );
+
+    // Calculate the start index to keep selected date centered
+    let startIndex = selectedIndex - 1;
+    if (startIndex < 0) startIndex = 0;
+    if (startIndex > 4) startIndex = 4;
+
+    return weekDates.slice(startIndex, startIndex + 3);
+  }, [weekDates, selectedDate, width]);
 
   return (
     <SelectedDateContext.Provider value={selectedDate}>
@@ -60,12 +109,8 @@ export default function MatchScheduleLayout({
 
           <div className="flex items-center gap-1 mb-6">
             <button
-              onClick={() =>
-                setSelectedDate(
-                  new Date(selectedDate.setDate(selectedDate.getDate() - 1))
-                )
-              }
-              className="p-2 rounded hover:bg-gray-100 hidden sm:block"
+              onClick={handlePrevDay}
+              className="p-2 rounded hover:bg-gray-100"
               aria-label="Previous day"
             >
               <svg
@@ -85,7 +130,7 @@ export default function MatchScheduleLayout({
             </button>
 
             <div className="grid grid-cols-3 sm:grid-cols-7 gap-1 flex-1">
-              {weekDates.map((date, index) => {
+              {visibleDates.map((date, index) => {
                 const isSelected =
                   date.date.toDateString() === selectedDate.toDateString();
                 return (
@@ -112,12 +157,8 @@ export default function MatchScheduleLayout({
             </div>
 
             <button
-              onClick={() =>
-                setSelectedDate(
-                  new Date(selectedDate.setDate(selectedDate.getDate() + 1))
-                )
-              }
-              className="p-2 rounded hover:bg-gray-100 hidden sm:block"
+              onClick={handleNextDay}
+              className="p-2 rounded hover:bg-gray-100"
               aria-label="Next day"
             >
               <svg
