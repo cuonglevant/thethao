@@ -285,7 +285,7 @@ export function MainNav() {
             {TEAMS.map((team) => (
               <Link
                 key={team.name}
-                href={`/${slugify(team.name)}`}
+                href={`/teams/${slugify(team.name)}`}
                 className="flex items-center"
               >
                 <Image
