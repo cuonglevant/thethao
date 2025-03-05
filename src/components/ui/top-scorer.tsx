@@ -1,40 +1,60 @@
+import { Player } from "../../types/playerTypes";
+import { Team } from "../../types/teamTypes";
 import Image from "next/image";
+import React from "react";
 
-type Scorer = {
-  position: number;
+// Define the scorer type based on your actual data structure
+interface Scorer {
   player: {
-    name: string;
-    image: string;
+    _id: Player["_id"];
+    name: Player["name"];
+    image: Player["image"];
   };
   team: {
-    name: string;
-    logo: string;
+    name: Team["name"];
+    logo: Team["logo"];
   };
   goals: number;
-  assists: number;
-  matches: number;
-};
+  assists?: number;
+  appearances?: number;
+}
 
+interface TopScorerProps {
+  title?: string;
+  scorers?: Scorer[];
+}
+
+// Default scorers for demo/fallback
 const defaultScorers: Scorer[] = [
   {
-    position: 1,
     player: {
+      _id: "1",
       name: "Rimario Gordon",
-      image: "/placeholder.svg?height=32&width=32",
+      image: {
+        _id: "1",
+        mediaCaption: "",
+        mediaType: "image",
+        mediaURL: "/players/rimario-gordon.png",
+      },
     },
     team: {
       name: "Nam Định",
-      logo: "/placeholder.svg?height=32&width=32",
+      logo: "/teams/nam-dinh.png",
     },
     goals: 10,
     assists: 3,
-    matches: 15,
+    appearances: 15,
   },
   {
-    position: 2,
     player: {
+      _id: "2",
       name: "Nguyễn Văn Toàn",
-      image: "/placeholder.svg?height=32&width=32",
+      image: {
+        _id: "1",
+        mediaCaption: "",
+        mediaType: "image",
+        mediaURL: "/players/nguyen-van-toan.png",
+      },
     },
     team: {
       name: "Hà Nội FC",
@@ -42,13 +62,18 @@ const defaultScorers: Scorer[] = [
     },
     goals: 8,
     assists: 5,
-    matches: 14,
+    appearances: 14,
   },
   {
-    position: 3,
     player: {
+      _id: "3",
       name: "Nguyễn Tiến Linh",
-      image: "/placeholder.svg?height=32&width=32",
+      image: {
+        _id: "1",
+        mediaCaption: "",
+        mediaType: "image",
+        mediaURL: "/players/nguyen-tien-linh.png",
+      },
     },
     team: {
       name: "HAGL",
@@ -56,13 +81,18 @@ const defaultScorers: Scorer[] = [
     },
     goals: 7,
     assists: 2,
-    matches: 15,
+    appearances: 15,
   },
   {
-    position: 4,
     player: {
+      _id: "4",
       name: "Rafaelson",
-      image: "/placeholder.svg?height=32&width=32",
+      image: {
+        _id: "1",
+        mediaCaption: "",
+        mediaType: "image",
+        mediaURL: "/players/rafaelson.png",
+      },
     },
     team: {
       name: "Thanh Hóa",
@@ -70,13 +100,18 @@ const defaultScorers: Scorer[] = [
     },
     goals: 7,
     assists: 1,
-    matches: 13,
+    appearances: 13,
   },
   {
-    position: 5,
     player: {
+      _id: "5",
       name: "Geovane",
-      image: "/placeholder.svg?height=32&width=32",
+      image: {
+        _id: "1",
+        mediaCaption: "",
+        mediaType: "image",
+        mediaURL: "/players/geovane.png",
+      },
     },
     team: {
       name: "Viettel",
@@ -84,19 +119,19 @@ const defaultScorers: Scorer[] = [
     },
     goals: 6,
     assists: 4,
-    matches: 15,
+    appearances: 15,
   },
 ];
-
-interface TopScorerProps {
-  title?: string;
-  scorers?: Scorer[];
-}
 
 export function TopScorer({
   title = "VUA PHÁ LƯỚI V-LEAGUE 2024",
   scorers = defaultScorers,
 }: TopScorerProps) {
+  // Sort the scorers by goals in descending order
+  const sortedScorers = React.useMemo(() => {
+    return [...scorers].sort((a, b) => b.goals - a.goals);
+  }, [scorers]);
+
   return (
     <div className="bg-white rounded shadow overflow-hidden">
       <div className="bg-blue-800 text-white p-3">
@@ -114,62 +149,79 @@ export function TopScorer({
             </tr>
           </thead>
           <tbody>
-            {scorers.map((scorer) => (
-              <tr key={scorer.position} className="hover:bg-gray-50">
-                <td className="py-2">
-                  <span
-                    className={`inline-flex items-center justify-center w-6 h-6 rounded text-sm
-                    ${
-                      scorer.position <= 3
-                        ? "bg-blue-600 text-white"
-                        : "bg-gray-100"
-                    }`}
-                  >
-                    {scorer.position}
-                  </span>
-                </td>
-                <td className="py-2">
-                  <div className="flex items-center gap-2">
-                    <Image
-                      src={scorer.player.image}
-                      alt={scorer.player.name}
-                      width={24}
-                      height={24}
-                      className="w-6 h-6 rounded-full"
-                    />
-                    <div className="flex flex-col">
-                      <span className="text-sm font-medium truncate max-w-[120px] sm:max-w-[150px]">
-                        {scorer.player.name}
-                      </span>
-                      <div className="flex items-center gap-1">
-                        <Image
-                          src={scorer.team.logo}
-                          alt={scorer.team.name}
-                          width={16}
-                          height={16}
-                          className="w-4 h-4"
-                        />
-                        <span className="text-xs text-gray-500 truncate max-w-[100px]">
-                          {scorer.team.name}
+            {sortedScorers.map((scorer, index) => {
+              // Calculate position (add 1 because index is 0-based)
+              // Handle ties - players with same goals get the same position
+              const position =
+                index > 0 && scorer.goals === sortedScorers[index - 1].goals
+                  ? getPositionByIndex(sortedScorers, index)
+                  : index + 1;
+
+              return (
+                <tr key={scorer.player._id || index} className="hover:bg-gray-50">
+                  <td className="py-2">
+                    <span
+                      className={`inline-flex items-center justify-center w-6 h-6 rounded text-sm
+                      ${
+                        position <= 3
+                          ? "bg-blue-600 text-white"
+                          : "bg-gray-100"
+                      }`}
+                    >
+                      {position}
+                    </span>
+                  </td>
+                  <td className="py-2">
+                    <div className="flex items-center gap-2">
+                      <Image
+                        src={scorer.player.image.mediaURL}
+                        alt={scorer.player.name}
+                        width={24}
+                        height={24}
+                        className="w-6 h-6 rounded-full"
+                      />
+                      <div className="flex flex-col">
+                        <span className="text-sm font-medium truncate max-w-[120px] sm:max-w-[150px]">
+                          {scorer.player.name}
                         </span>
+                        <div className="flex items-center gap-1">
+                          <Image
+                            src={scorer.team.logo}
+                            alt={scorer.team.name}
+                            width={16}
+                            height={16}
+                            className="w-4 h-4"
+                          />
+                          <span className="text-xs text-gray-500 truncate max-w-[100px]">
+                            {scorer.team.name}
+                          </span>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </td>
-                <td className="text-center text-sm hidden sm:table-cell">
-                  {scorer.matches}
-                </td>
-                <td className="text-center text-sm hidden sm:table-cell">
-                  {scorer.assists}
-                </td>
-                <td className="text-center text-sm font-bold">
-                  {scorer.goals}
-                </td>
-              </tr>
-            ))}
+                  </td>
+                  {/* Add additional table cells for other data */}
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
     </div>
   );
+}
+
+// Helper function to get position considering ties
+function getPositionByIndex(sortedScorers: Scorer[], currentIndex: number): number {
+  // Look backwards until we find a player with different goals
+  let position = currentIndex;
+
+  while (
+    position > 0 &&
+    sortedScorers[position].goals === sortedScorers[position - 1].goals
+  ) {
+    position--;
+  }
+
+  // Position is 1-based, not 0-based
+  return position + 1;
 }

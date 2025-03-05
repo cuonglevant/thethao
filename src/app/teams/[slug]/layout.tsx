@@ -101,10 +101,15 @@ const standingsData: (Team & {
 
 const topScorersData = [
   {
-    position: 1,
     player: {
+      _id: "1",
       name: "Marcus Rashford",
-      image: "/players/rashford.jpg",
+      image: {
+        _id: "1",
+        mediaCaption: "",
+        mediaType: "image",
+        mediaURL: "/players/rashford.jpg",
+      },
     },
     team: {
       name: "Manchester United",
@@ -115,10 +120,15 @@ const topScorersData = [
     matches: 25,
   },
   {
-    position: 2,
     player: {
+      _id: "1",
       name: "Bruno Fernandes",
-      image: "/players/fernandes.jpg",
+      image: {
+        _id: "1",
+        mediaCaption: "",
+        mediaType: "image",
+        mediaURL: "/players/fernandes.jpg",
+      },
     },
     team: {
       name: "Manchester United",
