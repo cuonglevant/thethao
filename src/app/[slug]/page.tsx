@@ -326,7 +326,7 @@ const topScorersData = [
   },
 ];
 
-export default async function Page({ params }: PageProps) {
+export default async function Page({ params }: Readonly<PageProps>) {
   const resolvedParams = await params;
   if (!(resolvedParams.slug in titles)) {
     notFound();

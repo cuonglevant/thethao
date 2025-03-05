@@ -14,7 +14,7 @@ export type Content = {
   title: string;
   content: string;
   description: string;
-  publishDate: Date;
+  publishDate?: Date | undefined;
   author: User[];
   media: Media[];
   comment: Comment[];

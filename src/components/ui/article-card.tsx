@@ -17,11 +17,15 @@ export const ArticleCard = ({
   <article className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-start mb-4 sm:mb-6 last:mb-0">
     <div className="w-full sm:w-auto order-2 sm:order-1 flex-1">
       <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-500">
-        <span>{new Date(publishDate).toLocaleDateString("vi-VN")}</span>
+        <span>
+          {publishDate
+            ? new Date(publishDate).toLocaleDateString("vi-VN")
+            : "N/A"}
+        </span>
         <span>•</span>
-        <span>{author[0]?.username}</span>
+        <span>{author[0]?.username || "Unknown Author"}</span>
         <span>•</span>
-        <span>{category.name}</span>
+        <span>{category.name || "Uncategorized"}</span>
         <span>•</span>
         <span>{numOfViews.toLocaleString()} lượt xem</span>
       </div>

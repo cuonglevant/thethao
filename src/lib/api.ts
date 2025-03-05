@@ -8,7 +8,7 @@ import { Nation } from "@/types/nationTypes";
 const BASE_URL = process.env.BASE_URL;
 
 export async function getTeamBySlug(slug: string): Promise<Team> {
-  const response = await fetch(`${BASE_URL}/teams/${slug}`); // Adjust the endpoint to match your server route
+  const response = await fetch(`${BASE_URL}/teams/${slug}`);
 
   if (!response.ok) {
     throw new Error(`Error fetching team data: ${response.statusText}`);
@@ -19,7 +19,7 @@ export async function getTeamBySlug(slug: string): Promise<Team> {
 }
 
 export async function getLeagueBySlug(slug: string): Promise<League> {
-  const response = await fetch(`${BASE_URL}/leagues/${slug}`); // Adjust the endpoint to match your server route
+  const response = await fetch(`${BASE_URL}/leagues/${slug}`);
 
   if (!response.ok) {
     throw new Error(`Error fetching league data: ${response.statusText}`);
@@ -29,7 +29,7 @@ export async function getLeagueBySlug(slug: string): Promise<League> {
 }
 
 export async function getTopTeamsByPoints(slug: string): Promise<Team[]> {
-  const response = await fetch(`${BASE_URL}/leagues/${slug}/top-teams`); // Adjust the endpoint to match your server route
+  const response = await fetch(`${BASE_URL}/leagues/${slug}/top-teams`);
 
   if (!response.ok) {
     throw new Error(
@@ -42,7 +42,7 @@ export async function getTopTeamsByPoints(slug: string): Promise<Team[]> {
 }
 
 export async function getTopPlayersByPoints(slug: string): Promise<Player[]> {
-  const response = await fetch(`${BASE_URL}/leagues/${slug}/top-players`); // Adjust the endpoint to match your server route
+  const response = await fetch(`${BASE_URL}/leagues/${slug}/top-players`);
 
   if (!response.ok) {
     throw new Error(`Error fetching data: ${response.statusText}`);
@@ -53,7 +53,7 @@ export async function getTopPlayersByPoints(slug: string): Promise<Player[]> {
 }
 
 export async function getCategoryBySlug(slug: string): Promise<Category> {
-  const response = await fetch(`${BASE_URL}/categories/${slug}`); // Adjust the endpoint to match your server route
+  const response = await fetch(`${BASE_URL}/categories/${slug}`);
 
   if (!response.ok) {
     throw new Error(`Error fetching data: ${response.statusText}`);
@@ -64,7 +64,7 @@ export async function getCategoryBySlug(slug: string): Promise<Category> {
 }
 
 export async function getMatchesByDate(date: string): Promise<Match[]> {
-  const response = await fetch(`${BASE_URL}/matches/date/${date}`); // Adjust the endpoint to match your server route
+  const response = await fetch(`${BASE_URL}/matches/date/${date}`);
 
   if (!response.ok) {
     throw new Error(`Error fetching data: ${response.statusText}`);
@@ -75,7 +75,7 @@ export async function getMatchesByDate(date: string): Promise<Match[]> {
 }
 
 export async function getMatchBySlug(slug: string): Promise<Match> {
-  const response = await fetch(`${BASE_URL}/matches/${slug}`); // Adjust the endpoint to match your server route
+  const response = await fetch(`${BASE_URL}/matches/${slug}`);
 
   if (!response.ok) {
     throw new Error(`Error fetching data: ${response.statusText}`);
@@ -86,7 +86,7 @@ export async function getMatchBySlug(slug: string): Promise<Match> {
 }
 
 export async function getTopMatches(leagueId: string): Promise<Match[]> {
-  const response = await fetch(`${BASE_URL}/matches/top/views`); // Adjust the endpoint to match your server route
+  const response = await fetch(`${BASE_URL}/matches/top/views`);
 
   if (!response.ok) {
     throw new Error(`Error fetching data: ${response.statusText}`);
@@ -97,7 +97,7 @@ export async function getTopMatches(leagueId: string): Promise<Match[]> {
 }
 
 export async function getNationBySlug(slug: string): Promise<Nation> {
-  const response = await fetch(`${BASE_URL}/nations/${slug}`); // Adjust the endpoint to match your server route
+  const response = await fetch(`${BASE_URL}/nations/${slug}`);
 
   if (!response.ok) {
     throw new Error(`Error fetching data: ${response.statusText}`);
@@ -108,7 +108,7 @@ export async function getNationBySlug(slug: string): Promise<Nation> {
 }
 
 export async function getPlayerBySlug(slug: string): Promise<Player> {
-  const response = await fetch(`${BASE_URL}/players/${slug}`); // Adjust the endpoint to match your server route
+  const response = await fetch(`${BASE_URL}/players/${slug}`);
 
   if (!response.ok) {
     throw new Error(`Error fetching data: ${response.statusText}`);

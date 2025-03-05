@@ -20,7 +20,8 @@ const TEAM_TABS = [
 
 export default async function TeamPage({ params }: TeamPageProps) {
   // const team: Team = await getTeamBySlug(params.slug);
-  const teamName = params.slug;
+  const { slug } = await params;
+  const teamName = slug;
 
   return (
     <div className="space-y-4">
