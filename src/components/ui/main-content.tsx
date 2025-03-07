@@ -1,9 +1,11 @@
+import React from "react";
 import { Content } from "@/types/contentTypes";
 import { FeaturedArticle } from "./featured-article";
 
 const gridArticles: Content[] = [];
 
-function Featured() {
+// Option 2: Convert it to a proper React component
+export function Featured() {
   return (
     <FeaturedArticle
       image="/liver.png"
@@ -15,6 +17,8 @@ function Featured() {
   );
 }
 
-export const MainContent = {
-  Featured,
-};
+// Option 3: Call the function directly
+export function MainContent() {
+  const featuredContent = Featured();
+  return <div>{featuredContent}</div>;
+}

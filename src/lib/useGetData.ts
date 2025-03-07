@@ -33,13 +33,12 @@ import {
   divideMatchesByPastAndUpcoming,
 } from "../utils/matchUtils";
 
-import { fetchCompetition, fetchStandings } from './api-client';
+import { fetchCompetition, fetchStandings } from "./api-client";
 
-const DATA_URL =
-  process.env.NEXT_PUBLIC_API_URL ?? "https://api.football-data.org/v4";
+const DATA_URL = process.env.NEXT_PUBLIC_API_URL;
 //set headers
 const headers = {
-  "X-Auth-Token": "587278a62d85417da12bfd8bccc0d284",
+  "X-Auth-Token": process.env.NEXT_PUBLIC_API_TOKEN ?? "",
 };
 
 // Data fetching hooks
@@ -56,7 +55,9 @@ export function useGetSeasonData(competitionCode = "CL") {
         setSeasonData(data.currentSeason);
         setError(null);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "An unknown error occurred");
+        setError(
+          err instanceof Error ? err.message : "An unknown error occurred"
+        );
         console.error("Error fetching season data:", err);
       } finally {
         setLoading(false);
@@ -70,7 +71,9 @@ export function useGetSeasonData(competitionCode = "CL") {
 }
 
 export function useGetStandingsData(competitionCode = "PL") {
-  const [standingsData, setStandingsData] = useState<StandingsResponse | null>(null);
+  const [standingsData, setStandingsData] = useState<StandingsResponse | null>(
+    null
+  );
   const [leagueTable, setLeagueTable] = useState<StandingTable[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -81,17 +84,19 @@ export function useGetStandingsData(competitionCode = "PL") {
         setLoading(true);
         const data = await fetchStandings(competitionCode);
         setStandingsData(data);
-        
+
         if (data.standings && data.standings.length > 0) {
           setLeagueTable(data.standings[0].table);
         } else {
           setLeagueTable([]);
         }
-        
+
         setError(null);
       } catch (err) {
         console.error("Error fetching standings data:", err);
-        setError(err instanceof Error ? err.message : "An unknown error occurred");
+        setError(
+          err instanceof Error ? err.message : "An unknown error occurred"
+        );
         setStandingsData(null);
         setLeagueTable([]);
       } finally {

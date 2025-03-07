@@ -12,7 +12,7 @@ export default function RankingsPage() {
         <div className="mb-6">
           <LeagueStandingsContainer
             competitionCode="CL"
-            title="BẢNG XẾP HẠNG V-LEAGUE 2024"
+            title="Champions League 2024"
             highlightPosition={[1, 2, 3]}
           />
         </div>
@@ -21,7 +21,7 @@ export default function RankingsPage() {
         <div className="mb-6">
           <LeagueStandingsContainer
             competitionCode="PL"
-            title="BẢNG XẾP HẠNG NGOẠI HẠNG ANH 2023/24"
+            title="Premier League 2024"
             highlightPosition={[1, 2, 3, 4]}
           />
         </div>

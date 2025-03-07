@@ -1,5 +1,7 @@
+"use client";
+
 import React from "react";
-import { useGetStandingsData } from "@/lib/useGetData"; // Updated import path
+import { useGetStandingsData } from "@/lib/useGetData";
 import { LeagueStandings } from "./league-standings";
 
 type LeagueStandingsContainerProps = {
@@ -13,11 +15,7 @@ export const LeagueStandingsContainer = ({
   title = "League Table",
   highlightPosition = [1, 2, 3],
 }: LeagueStandingsContainerProps) => {
-  const { standingsData, leagueTable, loading, error } =
-    useGetStandingsData(competitionCode);
-
-  // Use the title from data if available and no custom title is provided
-  const displayTitle = standingsData?.standings?.[0]?.group || title;
+  const { leagueTable, loading, error } = useGetStandingsData(competitionCode);
 
   if (error) {
     return (
@@ -34,7 +32,7 @@ export const LeagueStandingsContainer = ({
 
   return (
     <LeagueStandings
-      title={displayTitle}
+      title={title}
       standings={leagueTable}
       competitionId={competitionCode}
       highlightPosition={highlightPosition}

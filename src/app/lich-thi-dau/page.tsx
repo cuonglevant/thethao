@@ -1,397 +1,290 @@
 "use client";
 
-import Image from "next/image";
-import { useContext, useState, useMemo, useEffect } from "react";
+import { useContext, useState, useMemo } from "react";
+import { format, isSameDay } from "date-fns";
+import { useGetMatchesByDate } from "@/hooks/useGetMatchesByDate";
 import { SelectedDateContext } from "./context";
 
-type Team = {
-  _id: string;
-  name: string;
-  logo: string;
-};
-
-type League = {
-  _id: string;
-  name: string;
-  logo: string;
-};
-
-type Category = {
-  _id: string;
-  name: string;
-};
-
-type Media = {
-  _id: string;
-  url: string;
-};
-
-type Content = {
-  _id: string;
-  text: string;
-};
-
-type Match = {
-  _id: string;
-  date: Date;
-  slug: string;
-  homeTeam: Team;
-  awayTeam: Team;
-  league: League;
-  category?: Category;
-  media: Media[];
-  score: {
-    home: number;
-    away: number;
-  };
-  status: "pending" | "playing" | "completed";
-  content?: Content;
-  views: number;
-};
-
-// Example data
-const matches: Match[] = [
-  {
-    _id: "1",
-    date: new Date("2025-03-03T13:00:00Z"),
-    slug: "esteghlal-vs-alnassr",
-    homeTeam: {
-      _id: "team1",
-      name: "Esteghlal F.C.",
-      logo: "/teams/esteghlal.png",
-    },
-    awayTeam: {
-      _id: "team2",
-      name: "Al Nassr",
-      logo: "/teams/alnassr.png",
-    },
-    league: {
-      _id: "league1",
-      name: "UEFA Champions League",
-      logo: "/competitions/acl.png",
-    },
-    media: [],
-    score: {
-      home: 0,
-      away: 0,
-    },
-    status: "pending",
-    views: 0,
-  },
-  {
-    _id: "2",
-    date: new Date("2025-03-03T12:00:00Z"),
-    slug: "gloria-vs-uta",
-    homeTeam: {
-      _id: "team3",
-      name: "Gloria Buzau",
-      logo: "/teams/gloria-buzau.png",
-    },
-    awayTeam: {
-      _id: "team4",
-      name: "UTA Arad",
-      logo: "/teams/uta-arad.png",
-    },
-    league: {
-      _id: "league2",
-      name: "Superliga",
-      logo: "/competitions/superliga.png",
-    },
-    media: [],
-    score: {
-      home: 2,
-      away: 1,
-    },
-    status: "playing",
-    views: 500,
-  },
-  {
-    _id: "3",
-    date: new Date("2025-03-02T12:00:00Z"),
-    slug: "gloria-vs-uta",
-    homeTeam: {
-      _id: "team3",
-      name: "Gloria Buzau",
-      logo: "/teams/gloria-buzau.png",
-    },
-    awayTeam: {
-      _id: "team4",
-      name: "UTA Arad",
-      logo: "/teams/uta-arad.png",
-    },
-    league: {
-      _id: "league2",
-      name: "La Liga",
-      logo: "/competitions/superliga.png",
-    },
-    media: [],
-    score: {
-      home: 2,
-      away: 1,
-    },
-    status: "completed",
-    views: 500,
-  },
-];
-
-type Tab = {
-  id: "all" | "pending" | "playing" | "completed";
-  label: string;
-  disableForPastDates?: boolean;
-  disableForFutureDates?: boolean;
-};
-
-const tabs: Tab[] = [
-  { id: "all", label: "TẤT CẢ" },
-  { id: "pending", label: "SẮP DIỄN RA", disableForPastDates: true },
-  {
-    id: "playing",
-    label: "ĐANG DIỄN RA",
-    disableForPastDates: true,
-    disableForFutureDates: true,
-  },
-  { id: "completed", label: "ĐÃ KẾT THÚC", disableForFutureDates: true },
-];
-
-type TabId = Tab["id"];
-
-const isSameDay = (date1: Date, date2: Date) => {
-  const d1 = convertToGMT7(date1);
-  const d2 = convertToGMT7(date2);
-
-  return (
-    d1.getDate() === d2.getDate() &&
-    d1.getMonth() === d2.getMonth() &&
-    d1.getFullYear() === d2.getFullYear()
-  );
-};
-
-const convertToGMT7 = (date: Date) => {
-  // Only for display purposes
-  const newDate = new Date(date);
-  const utc = newDate.getTime() + newDate.getTimezoneOffset() * 60000;
-  return new Date(utc + 3600000 * 7);
-};
-
-const formatDate = (date: Date) => {
-  const gmt7Date = convertToGMT7(date);
-  const day = gmt7Date.getDate();
-  const month = gmt7Date.getMonth() + 1;
-  return `${day}/${month}`;
-};
-
-const formatTime = (date: Date) => {
-  const gmt7Date = convertToGMT7(date);
-  return gmt7Date.toLocaleTimeString("vi-VN", {
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false,
-  });
-};
-
-export default function MatchSchedulePage() {
+export default function FixturesPage() {
+  // Use the selectedDate from context instead of local state
   const selectedDate = useContext(SelectedDateContext);
-  const today = new Date();
+
+  // State for filters (only keep the league filter)
   const [selectedLeague, setSelectedLeague] = useState<string>("all");
 
-  // Compare only dates without time
-  const isToday = isSameDay(today, selectedDate);
+  // Format date for the API (YYYY-MM-DD)
+  const formattedDate = format(selectedDate, "yyyy-MM-dd");
 
-  // Get dates without time for comparison
-  const getDateOnly = (date: Date) => {
-    const d = convertToGMT7(date);
-    return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  // Fetch matches for the selected date - only pass the starting date
+  const { matches, matchesByCompetition, loading, error } = useGetMatchesByDate(
+    formattedDate
+    // No second parameter, letting the hook handle adding a day
+  );
+
+  // Check if selectedDate is today
+  const isToday = isSameDay(selectedDate, new Date());
+
+  // Filter matches based on selected league
+  const filteredMatches = useMemo(() => {
+    if (!matches || matches.length === 0) return [];
+
+    return matches.filter((match) => {
+      // Filter by league/competition
+      if (
+        selectedLeague !== "all" &&
+        match.competition.name !== selectedLeague
+      ) {
+        return false;
+      }
+
+      // Hide matches with "IN_PLAY" status when not viewing today
+      if (!isToday && match.status === "IN_PLAY") return false;
+
+      return true;
+    });
+  }, [matches, selectedLeague, isToday]);
+
+  // Group matches by competition for display
+  const groupedMatches = useMemo(() => {
+    if (selectedLeague !== "all") {
+      // When a league is selected, just show those matches grouped by date
+      return {
+        [selectedLeague]: filteredMatches,
+      };
+    } else {
+      // When showing all leagues, group by competition
+      return Object.entries(matchesByCompetition).reduce(
+        (acc, [key, value]) => {
+          // Only include competitions that have matches after filtering
+          const competitionMatches = value.matches.filter((match) => {
+            // Apply the same filtering as above (except league filter)
+            return isToday || match.status !== "IN_PLAY";
+          });
+
+          if (competitionMatches.length > 0) {
+            acc[value.competition.name] = competitionMatches;
+          }
+
+          return acc;
+        },
+        {} as Record<string, any[]>
+      );
+    }
+  }, [filteredMatches, matchesByCompetition, selectedLeague, isToday]);
+
+  // Available leagues for the filter dropdown with priority sorting
+  const availableLeagues = useMemo(() => {
+    if (!matchesByCompetition) return [];
+
+    const leagues = Object.values(matchesByCompetition).map((item) => ({
+      id: item.competition.id,
+      name: item.competition.name,
+      logo: item.competition.emblem,
+    }));
+
+    // Sort leagues to prioritize Champions League and Premier League
+    return leagues.sort((a, b) => {
+      // Check for Champions League (put first)
+      if (a.name.includes("Champions League")) return -1;
+      if (b.name.includes("Champions League")) return 1;
+
+      // Check for Premier League (put second)
+      if (a.name.includes("Premier League")) return -1;
+      if (b.name.includes("Premier League")) return 1;
+
+      // For other leagues, maintain alphabetical order
+      return a.name.localeCompare(b.name);
+    });
+  }, [matchesByCompetition]);
+
+  // Handle league selection
+  const handleLeagueChange = (league: string) => {
+    setSelectedLeague(league);
   };
 
-  const isPastDate = getDateOnly(selectedDate) < getDateOnly(today);
-  const isFutureDate = getDateOnly(selectedDate) > getDateOnly(today);
-
-  const [selectedTab, setSelectedTab] = useState<TabId>("all");
-
-  // Reset to "all" tab if we navigate to a date where the current tab should be disabled
-  useEffect(() => {
-    const currentTab = tabs.find((tab) => tab.id === selectedTab);
-    if (!currentTab) return;
-
-    const shouldDisable =
-      (isPastDate && currentTab.disableForPastDates) ||
-      (isFutureDate && currentTab.disableForFutureDates);
-
-    if (shouldDisable) {
-      setSelectedTab("all");
-    }
-  }, [isPastDate, isFutureDate, selectedTab]);
-
-  const filteredMatches = useMemo(() => {
-    console.log("Selected date:", selectedDate.toISOString());
-    console.log(
-      "Matches:",
-      matches.map((m) => ({
-        id: m._id,
-        date: m.date.toISOString(),
-        status: m.status,
-      }))
-    );
-
-    return matches
-      .filter((match) => {
-        // Filter by league
-        if (selectedLeague !== "all" && match.league.name !== selectedLeague) {
-          return false;
-        }
-
-        // Only show matches from the selected date
-        const isMatchDay = isSameDay(match.date, selectedDate);
-        console.log(`Match ${match._id} on selected day?`, isMatchDay);
-
-        if (!isMatchDay) return false;
-
-        // Hide matches with "playing" status when not viewing today
-        if (!isToday && match.status === "playing") return false;
-
-        // Hide matches with "pending" status when viewing past dates
-        if (isPastDate && match.status === "pending") return false;
-
-        // Apply tab filters
-        if (selectedTab === "all") return true;
-        return match.status === selectedTab;
-      })
-      .sort(
-        (a, b) =>
-          convertToGMT7(a.date).getTime() - convertToGMT7(b.date).getTime()
-      );
-  }, [selectedTab, isToday, isPastDate, selectedDate, selectedLeague]);
-
   return (
-    <div>
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-blue-800">
-          {isToday
-            ? "LỊCH THI ĐẤU BÓNG ĐÁ HÔM NAY"
-            : `LỊCH THI ĐẤU BÓNG ĐÁ NGÀY ${formatDate(selectedDate)}`}
-        </h1>
-        <div className="flex items-center">
-          <span className="text-gray-600 mr-2">
-            {formatTime(new Date())} Giờ Việt Nam (GMT+7)
-          </span>
-        </div>
-      </div>
+    <div className="container mx-auto">
+      {/* Remove the date picker as it's now in the layout */}
 
-      <div className="bg-white rounded-lg shadow mb-6">
-        <div className="flex border-b">
-          {tabs.map((tab) => {
-            const isDisabled =
-              (isPastDate && tab.disableForPastDates) ||
-              (isFutureDate && tab.disableForFutureDates);
-            return (
-              <button
-                key={tab.id}
-                onClick={() => !isDisabled && setSelectedTab(tab.id)}
-                disabled={isDisabled}
-                className={`px-6 py-3 text-sm font-medium transition-colors ${
-                  selectedTab === tab.id
-                    ? "text-blue-600 border-b-2 border-blue-600"
-                    : isDisabled
-                    ? "text-gray-300 cursor-not-allowed"
-                    : "text-gray-500 hover:text-blue-600"
-                }`}
-              >
-                {tab.label}
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      <div className="flex justify-end mb-4">
+      {/* League selector */}
+      <div className="mb-6">
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Giải đấu
+        </label>
         <select
-          className="p-2 border rounded-lg text-sm min-w-[200px]"
           value={selectedLeague}
-          onChange={(e) => setSelectedLeague(e.target.value)}
+          onChange={(e) => handleLeagueChange(e.target.value)}
+          className="w-full p-2 border rounded"
         >
           <option value="all">Tất cả giải đấu</option>
-          {Array.from(
-            new Set(
-              matches
-                .filter((m) => isSameDay(m.date, selectedDate))
-                .map((m) => m.league.name)
-            )
-          ).map((leagueName) => (
-            <option key={leagueName} value={leagueName}>
-              {leagueName}
+
+          {/* Render the leagues with priority leagues styled differently */}
+          {availableLeagues.map((league) => (
+            <option
+              key={league.id}
+              value={league.name}
+              className={
+                league.name.includes("Champions League") ||
+                league.name.includes("Premier League")
+                  ? "font-bold"
+                  : ""
+              }
+            >
+              {league.name.includes("Champions League") ||
+              league.name.includes("Premier League")
+                ? "★ " + league.name
+                : league.name}
             </option>
           ))}
         </select>
       </div>
 
-      <div className="space-y-4">
-        {filteredMatches.map((match) => (
-          <div key={match._id} className="bg-white rounded-lg p-4">
-            <div className="flex items-center gap-2 mb-3">
-              <Image
-                src={match.league.logo}
-                alt={match.league.name}
-                width={20}
-                height={20}
-                className="object-contain"
-              />
-              <span className="text-sm font-medium">{match.league.name}</span>
-              {match.status === "playing" && (
-                <span className="text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded-full">
-                  Live
-                </span>
-              )}
-            </div>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3 flex-1">
-                <div className="relative w-8 h-8">
-                  <Image
-                    src={match.homeTeam.logo}
-                    alt={match.homeTeam.name}
-                    fill
-                    className="object-contain"
-                  />
+      {/* Loading state */}
+      {loading && (
+        <div className="flex justify-center my-8">
+          <div className="loader">Loading...</div>
+        </div>
+      )}
+
+      {/* Error state */}
+      {error && (
+        <div className="bg-red-50 border border-red-200 text-red-700 p-4 rounded mb-6">
+          {error}
+        </div>
+      )}
+
+      {/* No matches found */}
+      {!loading && filteredMatches.length === 0 && (
+        <div className="text-center py-8">
+          <p className="text-gray-500">
+            Không có trận đấu nào cho ngày đã chọn.
+          </p>
+        </div>
+      )}
+
+      {/* Match listing */}
+      {!loading && (
+        <>
+          {/* Sort competitions to prioritize Champions League and Premier League */}
+          {Object.entries(groupedMatches)
+            .sort(([competitionA], [competitionB]) => {
+              // Champions League first
+              if (competitionA.includes("Champions League")) return -1;
+              if (competitionB.includes("Champions League")) return 1;
+
+              // Premier League second
+              if (competitionA.includes("Premier League")) return -1;
+              if (competitionB.includes("Premier League")) return 1;
+
+              // Alphabetical for the rest
+              return competitionA.localeCompare(competitionB);
+            })
+            .map(([competition, matches]) => (
+              <div key={competition} className="mb-8">
+                <h2
+                  className={`text-lg mb-3 ${
+                    competition.includes("Champions League") ||
+                    competition.includes("Premier League")
+                      ? "font-bold text-blue-700"
+                      : "font-semibold"
+                  }`}
+                >
+                  {competition.includes("Champions League") ||
+                  competition.includes("Premier League")
+                    ? "★ " + competition
+                    : competition}
+                </h2>
+
+                <div className="bg-white rounded-lg shadow overflow-hidden">
+                  {matches.map((match) => (
+                    <div
+                      key={match.id}
+                      className={`border-b last:border-0 p-4 hover:bg-gray-50 ${
+                        competition.includes("Champions League")
+                          ? "bg-blue-50"
+                          : competition.includes("Premier League")
+                          ? "bg-purple-50"
+                          : ""
+                      }`}
+                    >
+                      <div className="flex items-center">
+                        {/* Match time */}
+                        <div className="w-16 text-center flex-shrink-0">
+                          {match.status === "IN_PLAY" ? (
+                            <span className="text-red-600 font-semibold animate-pulse">
+                              LIVE
+                            </span>
+                          ) : match.status === "FINISHED" ? (
+                            <span className="text-gray-500 text-sm">FT</span>
+                          ) : (
+                            <span className="text-gray-700">
+                              {format(new Date(match.utcDate), "HH:mm")}
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Teams and Score - Using Grid for perfect centering */}
+                        <div className="flex-1 grid grid-cols-3 items-center">
+                          {/* Home team - right aligned */}
+                          <div className="flex items-center justify-end">
+                            <span className="font-medium text-right pr-2">
+                              {match.homeTeam.shortName || match.homeTeam.name}
+                            </span>
+                            {match.homeTeam.crest && (
+                              <img
+                                src={match.homeTeam.crest}
+                                alt={match.homeTeam.name}
+                                className="h-5 w-5 object-contain"
+                                width={20}
+                                height={20}
+                              />
+                            )}
+                          </div>
+
+                          {/* Score or VS - centered */}
+                          <div className="flex items-center justify-center">
+                            {match.status === "FINISHED" ||
+                            match.status === "IN_PLAY" ? (
+                              <span className="font-bold">
+                                {match.score.fullTime.home} -{" "}
+                                {match.score.fullTime.away}
+                              </span>
+                            ) : (
+                              <span className="text-gray-400 font-medium">
+                                vs
+                              </span>
+                            )}
+                          </div>
+
+                          {/* Away team - left aligned */}
+                          <div className="flex items-center justify-start">
+                            {match.awayTeam.crest && (
+                              <img
+                                src={match.awayTeam.crest}
+                                alt={match.awayTeam.name}
+                                className="h-5 w-5 object-contain mr-2"
+                                width={20}
+                                height={20}
+                              />
+                            )}
+                            <span className="font-medium text-left pl-2">
+                              {match.awayTeam.shortName || match.awayTeam.name}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Venue or additional info */}
+                        <div className="w-24 text-right text-xs text-gray-500 flex-shrink-0">
+                          {match.venue || match.group || ""}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-                <span className="font-medium text-sm">
-                  {match.homeTeam.name}
-                </span>
               </div>
-              <div className="flex items-center gap-2 px-4">
-                <span className="text-sm font-bold">
-                  {match.status === "pending" ? "?" : match.score.home}
-                </span>
-                <span className="text-xs text-gray-400 mx-1">-</span>
-                <span className="text-sm font-bold">
-                  {match.status === "pending" ? "?" : match.score.away}
-                </span>
-              </div>
-              <div className="flex items-center gap-3 flex-1 justify-end">
-                <span className="font-medium text-sm">
-                  {match.awayTeam.name}
-                </span>
-                <div className="relative w-8 h-8">
-                  <Image
-                    src={match.awayTeam.logo}
-                    alt={match.awayTeam.name}
-                    fill
-                    className="object-contain"
-                  />
-                </div>
-              </div>
-            </div>
-            <div className="mt-2 flex justify-between items-center">
-              <div className="text-sm text-gray-500">
-                {formatTime(match.date)}
-              </div>
-              {match.views > 0 && (
-                <div className="text-xs text-gray-500">
-                  {match.views.toLocaleString()} lượt xem
-                </div>
-              )}
-            </div>
-          </div>
-        ))}
-      </div>
+            ))}
+        </>
+      )}
     </div>
   );
 }

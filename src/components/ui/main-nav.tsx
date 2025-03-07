@@ -86,7 +86,7 @@ const UTILITIES = [
     name: "BXH",
     icon: "bar-chart-2",
     Component: BarChart2,
-    href: "/bang-xep-hang",
+    href: "/ranking",
   },
   {
     name: "Trực tiếp",
