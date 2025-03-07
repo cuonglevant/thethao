@@ -92,4 +92,27 @@ export async function fetchMatchesByDateRange(
   return fetchMatches({ dateFrom, dateTo });
 }
 
+// Update the fetchTopScorers function to use absolute URLs
+
+export async function fetchTopScorers(competitionCode: string, limit = 10) {
+  // Get base URL from environment or use a default
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+
+  // Create absolute URL for server-side fetching
+  const url = new URL(`/api/competitions/${competitionCode}/scorers`, baseUrl);
+  url.searchParams.append("limit", limit.toString());
+
+  console.log(`Fetching top scorers from: ${url.toString()}`);
+
+  const response = await fetch(url.toString());
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => null);
+    const errorMessage = errorData?.error || response.statusText;
+    throw new Error(`Failed to fetch top scorers: ${errorMessage}`);
+  }
+
+  return response.json();
+}
+
 // Add more API functions as needed

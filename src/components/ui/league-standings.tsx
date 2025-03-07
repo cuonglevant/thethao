@@ -11,6 +11,7 @@ type LeagueStandingsProps = {
   competitionId?: string;
   highlightPosition?: number[];
   isLoading?: boolean;
+  limit?: number; // Add a limit prop with default value of 10
 };
 
 export const LeagueStandings = ({
@@ -19,6 +20,7 @@ export const LeagueStandings = ({
   competitionId,
   highlightPosition = [1, 2, 3],
   isLoading = false,
+  limit = 10, // Add a limit prop with default value of 10
 }: LeagueStandingsProps) => {
   if (isLoading) {
     return (
@@ -68,7 +70,7 @@ export const LeagueStandings = ({
             </tr>
           </thead>
           <tbody>
-            {standings.map((team) => (
+            {standings.slice(0, limit).map((team) => (
               <tr key={team.position} className="hover:bg-gray-50">
                 <td className="py-2">
                   <span

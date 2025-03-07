@@ -43,12 +43,15 @@ export default function HomePage() {
 
             {/* Top Scorer Section */}
             <div className="mb-6">
-              <TopScorer />
+              <TopScorer competitionCode="CL" limit={10} />
             </div>
 
             {/* Static League Standings */}
             <div className="mb-6">
-              <LeagueStandingsContainer competitionCode="SA" title="Serie A" />
+              <LeagueStandingsContainer
+                competitionCode="PL"
+                title="Premier League"
+              />
             </div>
           </div>
         </div>
