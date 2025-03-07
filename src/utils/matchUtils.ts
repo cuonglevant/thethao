@@ -66,8 +66,10 @@ export const divideMatchesByPastAndUpcoming = (matches: Match[]) => {
     }
   });
 
+  const reversedPast = [...past].reverse();
+
   return {
-    pastMatches: past.reverse(), // Most recent first
-    upcomingMatches: upcoming, // Soonest first
+    pastMatches: reversedPast,
+    upcomingMatches: upcoming,
   };
 };

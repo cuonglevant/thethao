@@ -1,3 +1,4 @@
+"use client";
 import { useState, useEffect, useCallback, useMemo } from "react";
 import {
   Season,
@@ -19,96 +20,86 @@ import {
 } from "../types/Types";
 
 // Import the utility functions we've moved
-import { getFormattedMatchDate, getFormattedMatchTime, getMatchStatus } from "../utils/dateUtils";
-import { 
-  groupMatchesByMatchday, 
-  groupMatchesByDate, 
-  sortMatchesByDateTime, 
+import {
+  getFormattedMatchDate,
+  getFormattedMatchTime,
+  getMatchStatus,
+} from "../utils/dateUtils";
+import {
+  groupMatchesByMatchday,
+  groupMatchesByDate,
+  sortMatchesByDateTime,
   groupMatchesByCompetition,
-  divideMatchesByPastAndUpcoming 
+  divideMatchesByPastAndUpcoming,
 } from "../utils/matchUtils";
 
+import { fetchCompetition, fetchStandings } from './api-client';
+
+const DATA_URL =
+  process.env.NEXT_PUBLIC_API_URL ?? "https://api.football-data.org/v4";
+//set headers
+const headers = {
+  "X-Auth-Token": "587278a62d85417da12bfd8bccc0d284",
+};
+
 // Data fetching hooks
-export function useGetSeasonData(competitionCode = "PL") {
+export function useGetSeasonData(competitionCode = "CL") {
   const [seasonData, setSeasonData] = useState<Season | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchSeasonData = async () => {
+    const loadSeasonData = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`/api/competitions/${competitionCode}`);
-
-        if (!response.ok) {
-          throw new Error(
-            `Failed to fetch season data: ${response.statusText}`
-          );
-        }
-
-        const data = await response.json();
+        const data = await fetchCompetition(competitionCode);
         setSeasonData(data.currentSeason);
         setError(null);
       } catch (err) {
-        setError(
-          err instanceof Error ? err.message : "An unknown error occurred"
-        );
+        setError(err instanceof Error ? err.message : "An unknown error occurred");
         console.error("Error fetching season data:", err);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchSeasonData();
+    loadSeasonData();
   }, [competitionCode]);
 
-  return {
-    seasonData,
-    loading,
-    error,
-  };
+  return { seasonData, loading, error };
 }
 
 export function useGetStandingsData(competitionCode = "PL") {
-  const [standingsData, setStandingsData] = useState<StandingsResponse | null>(
-    null
-  );
+  const [standingsData, setStandingsData] = useState<StandingsResponse | null>(null);
   const [leagueTable, setLeagueTable] = useState<StandingTable[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchStandingsData = async () => {
+    const loadStandingsData = async () => {
       try {
         setLoading(true);
-        const response = await fetch(
-          `/api/competitions/${competitionCode}/standings`
-        );
-
-        if (!response.ok) {
-          throw new Error(`Failed to fetch standings: ${response.statusText}`);
-        }
-
-        const data: StandingsResponse = await response.json();
+        const data = await fetchStandings(competitionCode);
         setStandingsData(data);
-
-        // Extract the league table from the first standings group
+        
         if (data.standings && data.standings.length > 0) {
           setLeagueTable(data.standings[0].table);
+        } else {
+          setLeagueTable([]);
         }
-
+        
         setError(null);
       } catch (err) {
-        setError(
-          err instanceof Error ? err.message : "An unknown error occurred"
-        );
         console.error("Error fetching standings data:", err);
+        setError(err instanceof Error ? err.message : "An unknown error occurred");
+        setStandingsData(null);
+        setLeagueTable([]);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchStandingsData();
+    loadStandingsData();
   }, [competitionCode]);
 
   return {
@@ -116,8 +107,6 @@ export function useGetStandingsData(competitionCode = "PL") {
     leagueTable,
     loading,
     error,
-    competition: standingsData?.competition,
-    season: standingsData?.season,
   };
 }
 
@@ -131,12 +120,12 @@ export function useGetMatchData(competitionCode = "PL", matchday?: number) {
     const fetchMatchData = async () => {
       try {
         setLoading(true);
-        let url = `/api/competitions/${competitionCode}/matches`;
+        let url = `${DATA_URL}/competitions/${competitionCode}/matches`;
         if (matchday) {
           url += `?matchday=${matchday}`;
         }
 
-        const response = await fetch(url);
+        const response = await fetch(url, { headers });
 
         if (!response.ok) {
           throw new Error(`Failed to fetch matches: ${response.statusText}`);
@@ -185,7 +174,8 @@ export function useGetTeamsData(competitionCode = "PL") {
       try {
         setLoading(true);
         const response = await fetch(
-          `/api/competitions/${competitionCode}/teams`
+          `${DATA_URL}/competitions/${competitionCode}/teams`,
+          { headers }
         );
 
         if (!response.ok) {
@@ -328,12 +318,12 @@ export function useGetTopScorers(competitionCode = "PL", limit?: number) {
     const fetchTopScorers = async () => {
       try {
         setLoading(true);
-        let url = `/api/competitions/${competitionCode}/scorers`;
+        let url = `${DATA_URL}/competitions/${competitionCode}/scorers`;
         if (limit) {
           url += `?limit=${limit}`;
         }
 
-        const response = await fetch(url);
+        const response = await fetch(url, { headers });
 
         if (!response.ok) {
           throw new Error(
@@ -429,7 +419,9 @@ export function useGetTeamsList(
           queryParams.append("permission", permission);
         }
 
-        const response = await fetch(`/api/teams?${queryParams}`);
+        const response = await fetch(`${DATA_URL}/teams?${queryParams}`, {
+          headers,
+        });
 
         if (!response.ok) {
           throw new Error(`Failed to fetch teams list: ${response.statusText}`);
@@ -501,7 +493,9 @@ export function useGetTeamById(teamId: number | undefined) {
     const fetchTeam = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`/api/teams/${teamId}`);
+        const response = await fetch(`${DATA_URL}/teams/${teamId}`, {
+          headers,
+        });
 
         if (!response.ok) {
           throw new Error(`Failed to fetch team: ${response.statusText}`);
@@ -620,7 +614,10 @@ export function useGetTeamMatches(
           params.append("competitions", competitions.join(","));
         }
 
-        const response = await fetch(`/api/teams/${teamId}/matches?${params}`);
+        const response = await fetch(
+          `${DATA_URL}/teams/${teamId}/matches?${params}`,
+          { headers }
+        );
 
         if (!response.ok) {
           throw new Error(
@@ -715,7 +712,9 @@ export function useGetMatch(matchId: number | undefined) {
     const fetchMatch = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`/api/matches/${matchId}`);
+        const response = await fetch(`${DATA_URL}/matches/${matchId}`, {
+          headers,
+        });
 
         if (!response.ok) {
           throw new Error(`Failed to fetch match: ${response.statusText}`);
@@ -794,7 +793,9 @@ export function useGetMatchesByDate(dateFrom?: string, dateTo?: string) {
           dateTo: actualDateTo,
         });
 
-        const response = await fetch(`/api/matches?${params}`);
+        const response = await fetch(`${DATA_URL}/matches?${params}`, {
+          headers,
+        });
 
         if (!response.ok) {
           throw new Error(`Failed to fetch matches: ${response.statusText}`);
@@ -850,7 +851,12 @@ export function useGetMatchesByDate(dateFrom?: string, dateTo?: string) {
 }
 
 // Add a new hook for head-to-head data
-export function useGetHeadToHead(team1Id: number | undefined, team2Id: number | undefined, limit = 10) {
+export function useGetHeadToHead(
+  team1Id: number | undefined,
+  team2Id: number | undefined,
+  matchID: number | undefined,
+  limit = 10
+) {
   const [h2hData, setH2hData] = useState<HeadToHeadResponse | null>(null);
   const [matches, setMatches] = useState<Match[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -867,15 +873,20 @@ export function useGetHeadToHead(team1Id: number | undefined, team2Id: number | 
       try {
         setLoading(true);
         const params = new URLSearchParams({
-          limit: limit.toString()
+          limit: limit.toString(),
         });
-        
-        const response = await fetch(`/api/teams/${team1Id}/matches/head2head/${team2Id}?${params}`);
-        
+
+        const response = await fetch(
+          `${DATA_URL}/matches/${matchID}/head2head?${params}`,
+          { headers }
+        );
+
         if (!response.ok) {
-          throw new Error(`Failed to fetch head-to-head data: ${response.statusText}`);
+          throw new Error(
+            `Failed to fetch head-to-head data: ${response.statusText}`
+          );
         }
-        
+
         const data: HeadToHeadResponse = await response.json();
         setH2hData(data);
         setMatches(sortMatchesByDateTime(data.matches));
@@ -911,20 +922,23 @@ export function useGetHeadToHead(team1Id: number | undefined, team2Id: number | 
   // Calculate team statistics
   const teamStats = useMemo(() => {
     if (!h2hData?.aggregates) return null;
-    
+
     const { homeTeam, awayTeam } = h2hData.aggregates;
     const totalMatches = h2hData.aggregates.numberOfMatches;
-    
+
     return {
       [homeTeam.id]: {
         team: homeTeam,
-        winPercentage: totalMatches > 0 ? (homeTeam.wins / totalMatches) * 100 : 0
+        winPercentage:
+          totalMatches > 0 ? (homeTeam.wins / totalMatches) * 100 : 0,
       },
       [awayTeam.id]: {
         team: awayTeam,
-        winPercentage: totalMatches > 0 ? (awayTeam.wins / totalMatches) * 100 : 0
+        winPercentage:
+          totalMatches > 0 ? (awayTeam.wins / totalMatches) * 100 : 0,
       },
-      drawPercentage: totalMatches > 0 ? (homeTeam.draws / totalMatches) * 100 : 0
+      drawPercentage:
+        totalMatches > 0 ? (homeTeam.draws / totalMatches) * 100 : 0,
     };
   }, [h2hData]);
 
@@ -939,6 +953,6 @@ export function useGetHeadToHead(team1Id: number | undefined, team2Id: number | 
     resultSet: h2hData?.resultSet,
     teamStats,
     loading,
-    error
+    error,
   };
 }
