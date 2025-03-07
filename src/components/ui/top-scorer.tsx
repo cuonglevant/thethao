@@ -1,22 +1,24 @@
 import { Player } from "../../types/playerTypes";
-import { Team } from "../../types/teamTypes";
+import { Team } from "../../types/Types";
 import Image from "next/image";
 import React from "react";
 
-// Define the scorer type based on your actual data structure
+// Update the Scorer interface to make some properties optional or more flexible
 interface Scorer {
   player: {
-    _id: Player["_id"];
-    name: Player["name"];
-    image: Player["image"];
+    _id?: string; // Make _id optional
+    name: string;
+    image: string | { url: string; alt?: string }; // Accept both string and Media object
   };
   team: {
-    name: Team["name"];
-    logo: Team["logo"];
+    name: string;
+    logo: string;
   };
   goals: number;
   assists?: number;
   appearances?: number;
+  matches?: number; // Add this alias for appearances
+  position?: number; // Make position optional as we calculate it
 }
 
 interface TopScorerProps {
@@ -31,10 +33,7 @@ const defaultScorers: Scorer[] = [
       _id: "1",
       name: "Rimario Gordon",
       image: {
-        _id: "1",
-        mediaCaption: "",
-        mediaType: "image",
-        mediaURL: "/players/rimario-gordon.png",
+        url: "/players/rimario-gordon.png",
       },
     },
     team: {
@@ -50,10 +49,7 @@ const defaultScorers: Scorer[] = [
       _id: "2",
       name: "Nguyễn Văn Toàn",
       image: {
-        _id: "1",
-        mediaCaption: "",
-        mediaType: "image",
-        mediaURL: "/players/nguyen-van-toan.png",
+        url: "/players/nguyen-van-toan.png",
       },
     },
     team: {
@@ -69,10 +65,7 @@ const defaultScorers: Scorer[] = [
       _id: "3",
       name: "Nguyễn Tiến Linh",
       image: {
-        _id: "1",
-        mediaCaption: "",
-        mediaType: "image",
-        mediaURL: "/players/nguyen-tien-linh.png",
+        url: "/players/nguyen-tien-linh.png",
       },
     },
     team: {
@@ -88,10 +81,7 @@ const defaultScorers: Scorer[] = [
       _id: "4",
       name: "Rafaelson",
       image: {
-        _id: "1",
-        mediaCaption: "",
-        mediaType: "image",
-        mediaURL: "/players/rafaelson.png",
+        url: "/players/rafaelson.png",
       },
     },
     team: {
@@ -107,10 +97,7 @@ const defaultScorers: Scorer[] = [
       _id: "5",
       name: "Geovane",
       image: {
-        _id: "1",
-        mediaCaption: "",
-        mediaType: "image",
-        mediaURL: "/players/geovane.png",
+        url: "/players/geovane.png",
       },
     },
     team: {
@@ -142,10 +129,11 @@ export function TopScorer({
           <thead>
             <tr className="text-sm text-gray-600 border-b">
               <th className="text-left py-2 w-8">#</th>
-              <th className="text-left py-2">Cầu thủ</th>
-              <th className="text-center py-2 w-8 hidden sm:table-cell">Tr</th>
-              <th className="text-center py-2 w-8 hidden sm:table-cell">KP</th>
-              <th className="text-center py-2 w-12">B</th>
+              <th className="text-left py-2">Tên cầu thủ</th>
+              <th className="text-center py-2 w-8 hidden sm:table-cell">Bàn</th>
+              <th className="text-center py-2 w-16 hidden sm:table-cell">
+                Kiến tạo
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -158,14 +146,15 @@ export function TopScorer({
                   : index + 1;
 
               return (
-                <tr key={scorer.player._id || index} className="hover:bg-gray-50">
+                <tr
+                  key={scorer.player._id || `player-${index}`}
+                  className="hover:bg-gray-50"
+                >
                   <td className="py-2">
                     <span
                       className={`inline-flex items-center justify-center w-6 h-6 rounded text-sm
                       ${
-                        position <= 3
-                          ? "bg-blue-600 text-white"
-                          : "bg-gray-100"
+                        position <= 3 ? "bg-blue-600 text-white" : "bg-gray-100"
                       }`}
                     >
                       {position}
@@ -174,7 +163,11 @@ export function TopScorer({
                   <td className="py-2">
                     <div className="flex items-center gap-2">
                       <Image
-                        src={scorer.player.image.mediaURL}
+                        src={
+                          typeof scorer.player.image === "string"
+                            ? scorer.player.image
+                            : scorer.player.image.url
+                        }
                         alt={scorer.player.name}
                         width={24}
                         height={24}
@@ -211,7 +204,10 @@ export function TopScorer({
 }
 
 // Helper function to get position considering ties
-function getPositionByIndex(sortedScorers: Scorer[], currentIndex: number): number {
+function getPositionByIndex(
+  sortedScorers: Scorer[],
+  currentIndex: number
+): number {
   // Look backwards until we find a player with different goals
   let position = currentIndex;
 

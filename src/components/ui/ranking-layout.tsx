@@ -1,5 +1,5 @@
 import { LeagueStandings } from "./league-standings";
-import { Team } from "@/types/teamTypes";
+import { Team } from "@/types/Types";
 
 interface RankingLayoutProps {
   firstLeague: {

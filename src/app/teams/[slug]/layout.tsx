@@ -2,7 +2,7 @@ import { ReactNode } from "react";
 import { MatchSchedule } from "@/components/ui/match-schedule";
 import { LeagueStandings } from "@/components/ui/league-standings";
 import { TopScorer } from "@/components/ui/top-scorer";
-import { Team } from "@/types/teamTypes";
+import { Team } from "@/types/Types";
 
 interface TeamsLayoutProps {
   children: ReactNode;
@@ -101,6 +101,7 @@ const standingsData: (Team & {
 
 const topScorersData = [
   {
+    position: 1,
     player: {
       _id: "1",
       name: "Marcus Rashford",
@@ -120,11 +121,12 @@ const topScorersData = [
     matches: 25,
   },
   {
+    position: 2,
     player: {
-      _id: "1",
+      _id: "2",
       name: "Bruno Fernandes",
       image: {
-        _id: "1",
+        _id: "2",
         mediaCaption: "",
         mediaType: "image",
         mediaURL: "/players/fernandes.jpg",

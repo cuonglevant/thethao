@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { Team } from "@/types/teamTypes";
+import { Team } from "@/types/Types";
 
 type StandingTeam = Team & {
   position: number;
