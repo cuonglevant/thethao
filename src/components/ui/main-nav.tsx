@@ -15,7 +15,7 @@ import {
   Radio,
 } from "lucide-react";
 import { useState } from "react";
-import { slugify } from "@/lib/utils";
+import { slugify } from "@/utils/utils";
 
 interface LeagueItems {
   [key: string]: string[];

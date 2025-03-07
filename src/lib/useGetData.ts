@@ -14,73 +14,19 @@ import {
   Team,
   TeamMatchesResponse,
   Competition,
+  MatchesByDateResponse,
+  HeadToHeadResponse,
 } from "../types/Types";
 
-// Match date/time formatting utilities
-export const getFormattedMatchDate = (utcDate: string): string => {
-  const date = new Date(utcDate);
-  return date.toLocaleDateString("en-GB", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-  });
-};
-
-export const getFormattedMatchTime = (utcDate: string): string => {
-  const date = new Date(utcDate);
-  return date.toLocaleTimeString("en-GB", {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-};
-
-export const getMatchStatus = (match: Match): string => {
-  switch (match.status) {
-    case "FINISHED":
-      return "FT";
-    case "IN_PLAY":
-      return "LIVE";
-    case "PAUSED":
-      return "HT";
-    case "SCHEDULED":
-      return getFormattedMatchTime(match.utcDate);
-    default:
-      return match.status;
-  }
-};
-
-// Match grouping utilities
-export const groupMatchesByMatchday = (
-  matches: Match[]
-): Record<number, Match[]> => {
-  return matches.reduce((acc, match) => {
-    const matchday = match.matchday;
-    if (!acc[matchday]) {
-      acc[matchday] = [];
-    }
-    acc[matchday].push(match);
-    return acc;
-  }, {} as Record<number, Match[]>);
-};
-
-export const groupMatchesByDate = (
-  matches: Match[]
-): Record<string, Match[]> => {
-  return matches.reduce((acc, match) => {
-    const dateKey = getFormattedMatchDate(match.utcDate);
-    if (!acc[dateKey]) {
-      acc[dateKey] = [];
-    }
-    acc[dateKey].push(match);
-    return acc;
-  }, {} as Record<string, Match[]>);
-};
-
-export const sortMatchesByDateTime = (matches: Match[]): Match[] => {
-  return [...matches].sort(
-    (a, b) => new Date(a.utcDate).getTime() - new Date(b.utcDate).getTime()
-  );
-};
+// Import the utility functions we've moved
+import { getFormattedMatchDate, getFormattedMatchTime, getMatchStatus } from "../utils/dateUtils";
+import { 
+  groupMatchesByMatchday, 
+  groupMatchesByDate, 
+  sortMatchesByDateTime, 
+  groupMatchesByCompetition,
+  divideMatchesByPastAndUpcoming 
+} from "../utils/matchUtils";
 
 // Data fetching hooks
 export function useGetSeasonData(competitionCode = "PL") {
@@ -749,5 +695,250 @@ export function useGetTeamMatches(
     resultSet: matchesData?.resultSet,
     loading,
     error,
+  };
+}
+
+// Add this hook to useGetData.ts
+
+export function useGetMatch(matchId: number | undefined) {
+  const [match, setMatch] = useState<Match | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Don't fetch if no matchId is provided
+    if (!matchId) {
+      setLoading(false);
+      return;
+    }
+
+    const fetchMatch = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(`/api/matches/${matchId}`);
+
+        if (!response.ok) {
+          throw new Error(`Failed to fetch match: ${response.statusText}`);
+        }
+
+        const data: Match = await response.json();
+        setMatch(data);
+        setError(null);
+      } catch (err) {
+        setError(
+          err instanceof Error ? err.message : "An unknown error occurred"
+        );
+        console.error("Error fetching match data:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMatch();
+  }, [matchId]);
+
+  // Calculate match status display
+  const matchStatusDisplay = useMemo(() => {
+    if (!match) return "";
+    return getMatchStatus(match);
+  }, [match]);
+
+  // Calculate if the match is live
+  const isLive = useMemo(() => {
+    if (!match) return false;
+    return match.status === "IN_PLAY" || match.status === "PAUSED";
+  }, [match]);
+
+  // Format match date and time
+  const matchDateTime = useMemo(() => {
+    if (!match) return { date: "", time: "" };
+    return {
+      date: getFormattedMatchDate(match.utcDate),
+      time: getFormattedMatchTime(match.utcDate),
+    };
+  }, [match]);
+
+  return {
+    match,
+    loading,
+    error,
+    matchStatusDisplay,
+    isLive,
+    matchDateTime,
+    homeTeam: match?.homeTeam,
+    awayTeam: match?.awayTeam,
+    score: match?.score,
+    competition: match?.competition,
+  };
+}
+
+export function useGetMatchesByDate(dateFrom?: string, dateTo?: string) {
+  const [matchesData, setMatchesData] = useState<MatchesByDateResponse | null>(
+    null
+  );
+  const [matches, setMatches] = useState<Match[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Default to today's date if no dates provided
+    const today = new Date().toISOString().split("T")[0];
+    const actualDateFrom = dateFrom ?? today;
+    const actualDateTo = dateTo ?? actualDateFrom;
+
+    const fetchMatchesByDate = async () => {
+      try {
+        setLoading(true);
+        const params = new URLSearchParams({
+          dateFrom: actualDateFrom,
+          dateTo: actualDateTo,
+        });
+
+        const response = await fetch(`/api/matches?${params}`);
+
+        if (!response.ok) {
+          throw new Error(`Failed to fetch matches: ${response.statusText}`);
+        }
+
+        const data: MatchesByDateResponse = await response.json();
+        setMatchesData(data);
+        setMatches(sortMatchesByDateTime(data.matches));
+        setError(null);
+      } catch (err) {
+        setError(
+          err instanceof Error ? err.message : "An unknown error occurred"
+        );
+        console.error("Error fetching matches by date:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMatchesByDate();
+  }, [dateFrom, dateTo]);
+
+  // Group matches by competition
+  const matchesByCompetition = useMemo(() => {
+    return matches.reduce((acc, match) => {
+      const competitionId = match.competition.id;
+      if (!acc[competitionId]) {
+        acc[competitionId] = {
+          competition: match.competition,
+          matches: [],
+        };
+      }
+      acc[competitionId].matches.push(match);
+      return acc;
+    }, {} as Record<number, { competition: Competition; matches: Match[] }>);
+  }, [matches]);
+
+  // Group matches by date
+  const matchesByDate = useMemo(() => {
+    return groupMatchesByDate(matches);
+  }, [matches]);
+
+  return {
+    matchesData,
+    matches,
+    matchesByCompetition,
+    matchesByDate,
+    resultSet: matchesData?.resultSet,
+    loading,
+    error,
+    competitionCodes: matchesData?.resultSet?.competitions?.split(",") || [],
+  };
+}
+
+// Add a new hook for head-to-head data
+export function useGetHeadToHead(team1Id: number | undefined, team2Id: number | undefined, limit = 10) {
+  const [h2hData, setH2hData] = useState<HeadToHeadResponse | null>(null);
+  const [matches, setMatches] = useState<Match[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Don't fetch if either team ID is missing
+    if (!team1Id || !team2Id) {
+      setLoading(false);
+      return;
+    }
+
+    const fetchHeadToHead = async () => {
+      try {
+        setLoading(true);
+        const params = new URLSearchParams({
+          limit: limit.toString()
+        });
+        
+        const response = await fetch(`/api/teams/${team1Id}/matches/head2head/${team2Id}?${params}`);
+        
+        if (!response.ok) {
+          throw new Error(`Failed to fetch head-to-head data: ${response.statusText}`);
+        }
+        
+        const data: HeadToHeadResponse = await response.json();
+        setH2hData(data);
+        setMatches(sortMatchesByDateTime(data.matches));
+        setError(null);
+      } catch (err) {
+        setError(
+          err instanceof Error ? err.message : "An unknown error occurred"
+        );
+        console.error("Error fetching head-to-head data:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchHeadToHead();
+  }, [team1Id, team2Id, limit]);
+
+  // Group matches by competition
+  const matchesByCompetition = useMemo(() => {
+    return groupMatchesByCompetition(matches);
+  }, [matches]);
+
+  // Group matches by date
+  const matchesByDate = useMemo(() => {
+    return groupMatchesByDate(matches);
+  }, [matches]);
+
+  // Get past and upcoming matches
+  const { pastMatches, upcomingMatches } = useMemo(() => {
+    return divideMatchesByPastAndUpcoming(matches);
+  }, [matches]);
+
+  // Calculate team statistics
+  const teamStats = useMemo(() => {
+    if (!h2hData?.aggregates) return null;
+    
+    const { homeTeam, awayTeam } = h2hData.aggregates;
+    const totalMatches = h2hData.aggregates.numberOfMatches;
+    
+    return {
+      [homeTeam.id]: {
+        team: homeTeam,
+        winPercentage: totalMatches > 0 ? (homeTeam.wins / totalMatches) * 100 : 0
+      },
+      [awayTeam.id]: {
+        team: awayTeam,
+        winPercentage: totalMatches > 0 ? (awayTeam.wins / totalMatches) * 100 : 0
+      },
+      drawPercentage: totalMatches > 0 ? (homeTeam.draws / totalMatches) * 100 : 0
+    };
+  }, [h2hData]);
+
+  return {
+    h2hData,
+    matches,
+    matchesByCompetition,
+    matchesByDate,
+    pastMatches,
+    upcomingMatches,
+    aggregates: h2hData?.aggregates,
+    resultSet: h2hData?.resultSet,
+    teamStats,
+    loading,
+    error
   };
 }

@@ -108,6 +108,7 @@ export type Match = {
     | "POSTPONED"
     | "CANCELLED"
     | "AWARDED";
+  venue: string | null; // Add this field
   matchday: number;
   stage: string;
   group: string | null;
@@ -280,5 +281,54 @@ export type TeamMatchesResponse = {
     limit?: number;
   };
   resultSet: ResultSet;
+  matches: Match[];
+};
+
+export type MatchesByDateResponse = {
+  filters: {
+    dateFrom: string;
+    dateTo: string;
+    permission: string;
+  };
+  resultSet: {
+    count: number;
+    competitions: string;
+    first: string;
+    last: string;
+    played: number;
+  };
+  matches: Match[];
+};
+
+// Head-to-head team statistics
+export type TeamH2HStats = {
+  id: number;
+  name: string;
+  wins: number;
+  draws: number;
+  losses: number;
+};
+
+// Aggregated statistics for head-to-head matches
+export type H2HAggregates = {
+  numberOfMatches: number;
+  totalGoals: number;
+  homeTeam: TeamH2HStats;
+  awayTeam: TeamH2HStats;
+};
+
+// Head-to-head response from the API
+export type HeadToHeadResponse = {
+  filters: {
+    limit?: string;
+    permission?: string;
+  };
+  resultSet: {
+    count: number;
+    competitions: string;
+    first: string;
+    last: string;
+  };
+  aggregates: H2HAggregates;
   matches: Match[];
 };
