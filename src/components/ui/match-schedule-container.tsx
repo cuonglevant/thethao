@@ -4,46 +4,58 @@ import { useState, useEffect } from "react";
 import { MatchSchedule } from "./match-schedule";
 import { useGetMatchesByDate } from "@/hooks/useGetMatchesByDate";
 import { format, addDays } from "date-fns";
-// Import the locale explicitly
 import { vi } from "date-fns/locale";
 
 interface MatchScheduleContainerProps {
   title?: string;
   days?: number;
-  teamId?: number; // Add this property to the interface
+  teamId?: number;
 }
 
 export function MatchScheduleContainer({
   title = "LỊCH THI ĐẤU",
   days = 1,
-  teamId, // Add the new prop
+  teamId,
 }: MatchScheduleContainerProps) {
   // Store the dates in state to ensure stable rendering
   const [dateRange, setDateRange] = useState(() => {
     const today = new Date();
-    // Set time to start of day to avoid time zone issues
     today.setHours(0, 0, 0, 0);
 
     return {
       dateFrom: format(today, "yyyy-MM-dd"),
       dateTo: format(addDays(today, days), "yyyy-MM-dd"),
-      // Store formatted dates to avoid hydration mismatches
       formattedToday: format(today, "d/M"),
     };
   });
 
-  // Fetch matches using your hook with stable date values and teamId
+  // For team schedules, use a longer date range if no matches found
+  const [extendedRange, setExtendedRange] = useState(false);
+
+  // Fetch matches using your hook
   const { matchesByDate, loading, error } = useGetMatchesByDate(
     dateRange.dateFrom,
-    dateRange.dateTo,
-    teamId // Pass the teamId to the hook
+    extendedRange ? undefined : dateRange.dateTo, // Skip dateTo for extended range
+    teamId
   );
 
-  // Convert to the format expected by MatchSchedule with stable formatting
+  // Check if we found any matches
+  const hasMatches = Object.keys(matchesByDate || {}).length > 0;
+
+  // If teamId is provided and no matches found, try with extended range
+  useEffect(() => {
+    if (!loading && !error && teamId && !hasMatches && !extendedRange) {
+      console.log(
+        "No matches found for team in date range, extending search..."
+      );
+      setExtendedRange(true);
+    }
+  }, [loading, error, teamId, hasMatches, extendedRange]);
+
+  // Convert to the format expected by MatchSchedule
   const matchDays = Object.entries(matchesByDate || {}).map(
     ([dateString, dateMatches]) => {
       const matchDate = new Date(dateString);
-      // Set time to start of day to avoid time zone issues
       matchDate.setHours(0, 0, 0, 0);
 
       return {
@@ -74,7 +86,7 @@ export function MatchScheduleContainer({
           <h2 className="font-bold text-sm sm:text-base">{title}</h2>
         </div>
         <div className="p-4 text-center text-gray-500">
-          <p>Loading match schedule...</p>
+          <p>Đang tải lịch thi đấu...</p>
         </div>
       </div>
     );
@@ -87,7 +99,23 @@ export function MatchScheduleContainer({
           <h2 className="font-bold text-sm sm:text-base">{title}</h2>
         </div>
         <div className="p-4 text-center text-red-500">
-          <p>Failed to load matches</p>
+          <p>Lỗi: {error}</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!hasMatches) {
+    return (
+      <div className="bg-white rounded shadow overflow-hidden">
+        <div className="bg-blue-800 text-white p-3">
+          <h2 className="font-bold text-sm sm:text-base">{title}</h2>
+        </div>
+        <div className="p-4 text-center text-gray-500">
+          <p>
+            Không tìm thấy trận đấu nào
+            {teamId ? " cho đội bóng này" : ""} trong thời gian sắp tới
+          </p>
         </div>
       </div>
     );
