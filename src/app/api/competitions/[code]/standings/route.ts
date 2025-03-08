@@ -1,35 +1,34 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-const API_TOKEN = "587278a62d85417da12bfd8bccc0d284";
+const API_TOKEN = process.env.NEXT_PUBLIC_API_TOKEN;
+const BASE_URL = "https://api.football-data.org/v4";
 
 export async function GET(
-  request: Request,
+  request: NextRequest,
   { params }: { params: { code: string } }
 ) {
   try {
-    const code = params.code;
+    const competitionCode = await Promise.resolve(params.code);
 
-    console.log(
-      `Proxying request to football-data.org for ${code} standings...`
-    );
+    console.log(`API route: Fetching standings for ${competitionCode}`);
 
     const response = await fetch(
-      `https://api.football-data.org/v4/competitions/${code}/standings`,
+      `${BASE_URL}/competitions/${competitionCode}/standings`,
       {
         headers: {
-          "X-Auth-Token": API_TOKEN,
+          "X-Auth-Token": API_TOKEN || "",
         },
         next: { revalidate: 3600 }, // Cache for 1 hour
       }
     );
 
+    console.log(`API response status: ${response.status}`);
+
     if (!response.ok) {
       const errorText = await response.text();
-      console.error(`API Error: ${response.status} ${response.statusText}`);
-      console.error(`Error body: ${errorText}`);
-
+      console.error(`Error from football API: ${response.status}`, errorText);
       return NextResponse.json(
-        { error: `API error: ${response.status} ${response.statusText}` },
+        { error: `Football API error: ${response.status}` },
         { status: response.status }
       );
     }
@@ -37,9 +36,9 @@ export async function GET(
     const data = await response.json();
     return NextResponse.json(data);
   } catch (error) {
-    console.error("Error in standings API route:", error);
+    console.error("Error fetching standings:", error);
     return NextResponse.json(
-      { error: "Failed to fetch standings data" },
+      { error: "Server error while fetching standings" },
       { status: 500 }
     );
   }

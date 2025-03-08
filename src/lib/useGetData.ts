@@ -70,49 +70,73 @@ export function useGetSeasonData(competitionCode = "CL") {
   return { seasonData, loading, error };
 }
 
+// Update your existing useGetStandingsData hook - add this if it's missing or update if needed
+
 export function useGetStandingsData(competitionCode = "PL") {
-  const [standingsData, setStandingsData] = useState<StandingsResponse | null>(
-    null
-  );
-  const [leagueTable, setLeagueTable] = useState<StandingTable[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [standingsData, setStandingsData] = useState(null);
+  const [leagueTable, setLeagueTable] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const loadStandingsData = async () => {
+    const fetchStandings = async () => {
       try {
         setLoading(true);
-        const data = await fetchStandings(competitionCode);
-        setStandingsData(data);
+        setError(null);
+        console.log(`Fetching standings for competition: ${competitionCode}`);
 
-        if (data.standings && data.standings.length > 0) {
-          setLeagueTable(data.standings[0].table);
-        } else {
-          setLeagueTable([]);
+        // Get the base URL from environment or use default
+        const baseUrl =
+          process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+
+        // Create absolute URL for client-side fetching
+        const url = new URL(
+          `/api/competitions/${competitionCode}/standings`,
+          baseUrl
+        );
+
+        console.log(`Fetching standings from: ${url.toString()}`);
+
+        const response = await fetch(url.toString());
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(
+            `Failed to fetch standings: ${response.status} - ${errorText}`
+          );
         }
 
-        setError(null);
-      } catch (err) {
-        console.error("Error fetching standings data:", err);
+        const data = await response.json();
+        console.log(`Received standings data:`, data);
+
+        setStandingsData(data);
+
+        if (data && data.standings && data.standings.length > 0) {
+          // Usually the first item in the standings array is the total table
+          setLeagueTable(data.standings[0].table || []);
+          console.log(
+            `Extracted league table with ${
+              data.standings[0].table?.length || 0
+            } teams`
+          );
+        } else {
+          setLeagueTable([]);
+          console.log(`No table data found in standings response`);
+        }
+      } catch (error) {
+        console.error("Error fetching standings:", error);
         setError(
-          err instanceof Error ? err.message : "An unknown error occurred"
+          error instanceof Error ? error.message : "Failed to fetch standings"
         );
-        setStandingsData(null);
-        setLeagueTable([]);
       } finally {
         setLoading(false);
       }
     };
 
-    loadStandingsData();
+    fetchStandings();
   }, [competitionCode]);
 
-  return {
-    standingsData,
-    leagueTable,
-    loading,
-    error,
-  };
+  return { standingsData, leagueTable, loading, error };
 }
 
 export function useGetMatchData(competitionCode = "PL", matchday?: number) {

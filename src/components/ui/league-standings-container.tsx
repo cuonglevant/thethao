@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { useGetStandingsData } from "@/lib/useGetData";
 import { LeagueStandings } from "./league-standings";
 
@@ -8,14 +8,25 @@ type LeagueStandingsContainerProps = {
   competitionCode: string;
   title?: string;
   highlightPosition?: number[];
+  limit?: number;
 };
 
 export const LeagueStandingsContainer = ({
   competitionCode,
   title = "League Table",
   highlightPosition = [1, 2, 3],
+  limit = 10,
 }: LeagueStandingsContainerProps) => {
   const { leagueTable, loading, error } = useGetStandingsData(competitionCode);
+
+  // Debug logging to check if data is being fetched
+  useEffect(() => {
+    console.log(`LeagueStandingsContainer for ${competitionCode}:`, {
+      loading,
+      error,
+      tableLength: leagueTable?.length,
+    });
+  }, [competitionCode, loading, error, leagueTable]);
 
   if (error) {
     return (
@@ -33,10 +44,11 @@ export const LeagueStandingsContainer = ({
   return (
     <LeagueStandings
       title={title}
-      standings={leagueTable}
+      standings={leagueTable || []}
       competitionId={competitionCode}
       highlightPosition={highlightPosition}
       isLoading={loading}
+      limit={limit}
     />
   );
 };

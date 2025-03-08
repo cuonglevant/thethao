@@ -1,48 +1,43 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-const API_TOKEN = "587278a62d85417da12bfd8bccc0d284";
+const API_TOKEN = process.env.NEXT_PUBLIC_API_TOKEN;
 const BASE_URL = "https://api.football-data.org/v4";
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
+  const { searchParams } = new URL(request.url);
+
+  // Get params from query string
+  const dateFrom = searchParams.get("dateFrom");
+  const dateTo = searchParams.get("dateTo");
+
+  console.log(`🔍 DEBUG API ROUTE: Received request for matches:`, {
+    dateFrom,
+    dateTo,
+    url: request.url,
+  });
+
   try {
-    const { searchParams } = new URL(request.url);
-    const dateFrom = searchParams.get("dateFrom");
-    const dateTo = searchParams.get("dateTo");
+    // Build the URL with query parameters
+    let url = `${BASE_URL}/matches`;
+    const queryParams = new URLSearchParams();
 
-    console.log(`🔍 DEBUG API ROUTE: Received request for matches:`, {
-      dateFrom,
-      dateTo,
-      url: request.url,
-    });
+    if (dateFrom) queryParams.append("dateFrom", dateFrom);
+    if (dateTo) queryParams.append("dateTo", dateTo);
 
-    // Validate date format (YYYY-MM-DD)
-    const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
-    if (dateFrom && !dateRegex.test(dateFrom)) {
-      return NextResponse.json(
-        { error: `Invalid dateFrom format: ${dateFrom}. Expected YYYY-MM-DD` },
-        { status: 400 }
-      );
-    }
-    if (dateTo && !dateRegex.test(dateTo)) {
-      return NextResponse.json(
-        { error: `Invalid dateTo format: ${dateTo}. Expected YYYY-MM-DD` },
-        { status: 400 }
-      );
+    // Add more parameters as needed
+
+    // Add the query string to the URL
+    if (queryParams.toString()) {
+      url += `?${queryParams.toString()}`;
     }
 
-    // Build query parameters
-    const params = new URLSearchParams();
-    if (dateFrom) params.append("dateFrom", dateFrom);
-    if (dateTo) params.append("dateTo", dateTo);
+    console.log(`🔍 DEBUG API ROUTE: Calling external API: ${url}`);
 
-    const apiUrl = `${BASE_URL}/matches?${params}`;
-    console.log(`🔍 DEBUG API ROUTE: Calling external API:`, apiUrl);
-
-    const response = await fetch(apiUrl, {
+    const response = await fetch(url, {
       headers: {
-        "X-Auth-Token": API_TOKEN,
+        "X-Auth-Token": API_TOKEN || "",
       },
-      next: { revalidate: 60 }, // Cache for 1 minute during debug
+      next: { revalidate: 3600 }, // Cache for 1 hour
     });
 
     console.log(`🔍 DEBUG API ROUTE: External API response:`, {

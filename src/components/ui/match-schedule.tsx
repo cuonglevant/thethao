@@ -1,3 +1,4 @@
+import React from "react";
 import Image from "next/image";
 
 type Match = {
@@ -88,104 +89,127 @@ export function MatchSchedule({
         <div className="bg-blue-800 text-white p-3">
           <h2 className="font-bold text-sm sm:text-base">{title}</h2>
         </div>
-        <div className="p-4">
-          <div className="space-y-6">
-            {matchDays.map((day, dayIndex) => (
-              <div key={dayIndex}>
-                <div className="text-sm font-medium text-gray-600 mb-2">
-                  {day.date}
-                </div>
-                <div className="space-y-3">
-                  {day.matches.map((match, matchIndex) => (
-                    <div
-                      key={matchIndex}
-                      className="flex items-center justify-between p-2 hover:bg-gray-50 rounded"
-                    >
-                      <div className="text-sm text-gray-600 w-16">
-                        {match.time}
-                      </div>
-                      <div className="flex items-center flex-grow justify-center gap-2">
-                        <div className="flex items-center gap-2 w-32 justify-end">
-                          <span className="text-sm font-medium truncate">
-                            {match.home.name}
-                          </span>
-                          <Image
-                            src={match.home.logo}
+
+        {/* Mobile-optimized layout */}
+        <div className="p-2">
+          {matchDays.map((day, dayIndex) => (
+            <div key={dayIndex} className="mb-4">
+              {/* Date header */}
+              <div className="text-xs font-medium text-gray-600 mb-2 px-1">
+                {day.date}
+              </div>
+
+              {/* Matches */}
+              <div className="space-y-2">
+                {day.matches.map((match, matchIndex) => (
+                  <div
+                    key={matchIndex}
+                    className="border border-gray-100 rounded-md p-2 bg-white"
+                  >
+                    {/* Time */}
+                    <div className="text-xs text-gray-500 mb-2">
+                      {match.time}
+                    </div>
+
+                    {/* Teams - simple 3-column grid layout */}
+                    <div className="grid grid-cols-[4fr,1fr,4fr] items-center">
+                      {/* Home team */}
+                      <div className="flex items-center justify-end gap-1">
+                        <div className="text-xs font-medium text-right truncate max-w-[calc(100%-24px)]">
+                          {match.home.name}
+                        </div>
+                        <div className="w-5 h-5 flex-shrink-0">
+                          <img
+                            src={match.home.logo || "/placeholder.svg"}
                             alt={match.home.name}
-                            width={24}
-                            height={24}
-                            className="w-6 h-6"
+                            className="w-full h-full object-contain"
                           />
                         </div>
-                        <span className="text-sm font-bold">VS</span>
-                        <div className="flex items-center gap-2 w-32">
-                          <Image
-                            src={match.away.logo}
+                      </div>
+
+                      {/* VS */}
+                      <div className="text-center text-xs font-bold">VS</div>
+
+                      {/* Away team */}
+                      <div className="flex items-center gap-1">
+                        <div className="w-5 h-5 flex-shrink-0">
+                          <img
+                            src={match.away.logo || "/placeholder.svg"}
                             alt={match.away.name}
-                            width={24}
-                            height={24}
-                            className="w-6 h-6"
+                            className="w-full h-full object-contain"
                           />
-                          <span className="text-sm font-medium truncate">
-                            {match.away.name}
-                          </span>
+                        </div>
+                        <div className="text-xs font-medium truncate max-w-[calc(100%-24px)]">
+                          {match.away.name}
                         </div>
                       </div>
                     </div>
-                  ))}
-                </div>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
       </div>
     );
   }
 
+  // For the legacy matches format - also simplified
   return (
     <div className="bg-white rounded shadow overflow-hidden">
       <div className="bg-blue-800 text-white p-3">
         <h2 className="font-bold text-sm sm:text-base">{title}</h2>
       </div>
-      <div className="p-4">
-        <div className="space-y-3">
+
+      <div className="p-2">
+        <div className="space-y-2">
           {matches.map((match, index) => (
             <div
               key={index}
-              className="flex items-center justify-between p-2 hover:bg-gray-50 rounded"
+              className="border border-gray-100 rounded-md p-2 bg-white"
             >
-              <div className="text-sm text-gray-600 w-16">
-                <div>{match.time}</div>
-                <div>{match.date}</div>
+              {/* Date and time */}
+              <div className="flex justify-between text-xs text-gray-500 mb-2">
+                <span>{match.date}</span>
+                <span>{match.time}</span>
               </div>
-              <div className="flex items-center flex-grow justify-center gap-2">
-                <div className="flex items-center gap-2 w-32 justify-end">
-                  <span className="text-sm font-medium truncate">
+
+              {/* Teams - simple 3-column grid layout */}
+              <div className="grid grid-cols-[4fr,1fr,4fr] items-center">
+                {/* Home team */}
+                <div className="flex items-center justify-end gap-1">
+                  <div className="text-xs font-medium text-right truncate max-w-[calc(100%-24px)]">
                     {match.homeTeam.name}
-                  </span>
-                  <Image
-                    src={match.homeTeam.logo}
-                    alt={match.homeTeam.name}
-                    width={24}
-                    height={24}
-                    className="w-6 h-6"
-                  />
+                  </div>
+                  <div className="w-5 h-5 flex-shrink-0">
+                    <img
+                      src={match.homeTeam.logo}
+                      alt={match.homeTeam.name}
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
                 </div>
-                <span className="text-sm font-bold">VS</span>
-                <div className="flex items-center gap-2 w-32">
-                  <Image
-                    src={match.awayTeam.logo}
-                    alt={match.awayTeam.name}
-                    width={24}
-                    height={24}
-                    className="w-6 h-6"
-                  />
-                  <span className="text-sm font-medium truncate">
+
+                {/* VS */}
+                <div className="text-center text-xs font-bold">VS</div>
+
+                {/* Away team */}
+                <div className="flex items-center gap-1">
+                  <div className="w-5 h-5 flex-shrink-0">
+                    <img
+                      src={match.awayTeam.logo}
+                      alt={match.awayTeam.name}
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
+                  <div className="text-xs font-medium truncate max-w-[calc(100%-24px)]">
                     {match.awayTeam.name}
-                  </span>
+                  </div>
                 </div>
               </div>
-              <div className="text-xs text-gray-500 w-24 text-right hidden sm:block">
+
+              {/* Competition */}
+              <div className="text-xs text-gray-500 mt-2 text-right">
                 {match.competition}
               </div>
             </div>

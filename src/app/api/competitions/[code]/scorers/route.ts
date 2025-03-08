@@ -8,18 +8,19 @@ export async function GET(
   request: NextRequest,
   { params }: { params: { code: string } }
 ) {
-  // Get the limit from query params, default to 10
-  const { searchParams } = new URL(request.url);
-  const limit = searchParams.get("limit") || "10";
-
-  console.log(
-    `API route: Fetching top scorers for ${params.code} with limit ${limit}`
-  );
-
   try {
+    // Create a promise to handle the params asynchronously
+    const competitionCode = await Promise.resolve(params.code);
+    const { searchParams } = new URL(request.url);
+    const limit = searchParams.get("limit") || "10";
+
+    console.log(
+      `API route: Fetching top scorers for ${competitionCode} with limit ${limit}`
+    );
+
     // Make request to the football data API
     const response = await fetch(
-      `${BASE_URL}/competitions/${params.code}/scorers?limit=${limit}`,
+      `${BASE_URL}/competitions/${competitionCode}/scorers?limit=${limit}`,
       {
         headers: {
           "X-Auth-Token": API_TOKEN || "",

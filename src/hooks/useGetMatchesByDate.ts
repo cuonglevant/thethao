@@ -18,7 +18,12 @@ interface DebugInfo {
   errorTime?: string;
 }
 
-export function useGetMatchesByDate(dateFrom?: string, dateTo?: string) {
+// Add teamId parameter and pass it to the API call
+export function useGetMatchesByDate(
+  dateFrom?: string,
+  dateTo?: string,
+  teamId?: number
+) {
   const [matchesData, setMatchesData] = useState<MatchesByDateResponse | null>(
     null
   );
@@ -132,7 +137,7 @@ export function useGetMatchesByDate(dateFrom?: string, dateTo?: string) {
     return () => {
       isMounted = false;
     };
-  }, [dateFrom, dateTo]);
+  }, [dateFrom, dateTo, teamId]); // Add teamId as dependency
 
   // Debug output on each render
   console.log(`🔍 DEBUG RENDER: ${new Date().toISOString()}`, {

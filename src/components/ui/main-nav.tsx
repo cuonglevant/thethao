@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { slugify } from "@/utils/utils";
+import { POPULAR_TEAMS } from "@/constants/teams";
 
 interface LeagueItems {
   [key: string]: string[];
@@ -278,14 +279,14 @@ export function MainNav() {
         </div>
       </nav>
 
-      {/* Team Navigation */}
+      {/* Team Navigation - UPDATED */}
       <div className="bg-white py-2 border-b">
         <div className="container mx-auto px-2">
           <div className="flex flex-wrap sm:flex-nowrap items-center justify-center gap-2 sm:gap-4">
-            {TEAMS.map((team) => (
+            {POPULAR_TEAMS.map((team) => (
               <Link
-                key={team.name}
-                href={`/teams/${slugify(team.name)}`}
+                key={team.id}
+                href={`/teams/${team.id}-${slugify(team.name)}`}
                 className="flex items-center"
               >
                 <Image
@@ -296,7 +297,7 @@ export function MainNav() {
                   className="mr-2 object-contain w-5 h-5 sm:w-6 sm:h-6"
                 />
                 <span className="text-sm sm:text-base hover:text-pink-800">
-                  {team.name}
+                  {team.shortName}
                 </span>
               </Link>
             ))}
