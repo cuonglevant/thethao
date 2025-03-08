@@ -14,8 +14,15 @@ const TEAM_TABS = [
   { id: "doi-hinh", label: "ĐỘI HÌNH" },
 ];
 
+// Add proper typing for the TeamContent component
+interface TeamContentProps {
+  loading: boolean;
+  error: string | null; // Change from string to string | null
+  team: any;
+}
+
 // Helper function to render team content based on loading state
-function TeamContent({ loading, error, team }) {
+function TeamContent({ loading, error, team }: TeamContentProps) {
   if (loading) {
     return <p>Đang tải thông tin đội bóng...</p>;
   }
@@ -33,28 +40,32 @@ function TeamContent({ loading, error, team }) {
       <div>
         <h3 className="font-medium mb-2">Thông tin cơ bản</h3>
         <p>
-          <span className="font-medium">Tên đầy đủ:</span> {team.name}
+          <span className="font-medium">Tên đầy đủ:</span> {team.name || "N/A"}
         </p>
         <p>
-          <span className="font-medium">Tên ngắn:</span> {team.shortName}
+          <span className="font-medium">Tên ngắn:</span>{" "}
+          {team.shortName || "N/A"}
         </p>
         <p>
-          <span className="font-medium">Thành lập:</span> {team.founded}
+          <span className="font-medium">Thành lập:</span>{" "}
+          {team.founded || "N/A"}
         </p>
         <p>
-          <span className="font-medium">Sân vận động:</span> {team.venue}
+          <span className="font-medium">Sân vận động:</span>{" "}
+          {team.venue || "N/A"}
         </p>
       </div>
       <div>
         <h3 className="font-medium mb-2">Liên hệ</h3>
         <p>
-          <span className="font-medium">Địa chỉ:</span> {team.address}
+          <span className="font-medium">Địa chỉ:</span> {team.address || "N/A"}
         </p>
         <p>
-          <span className="font-medium">Website:</span> {team.website}
+          <span className="font-medium">Website:</span> {team.website || "N/A"}
         </p>
         <p>
-          <span className="font-medium">Màu sắc:</span> {team.clubColors}
+          <span className="font-medium">Màu sắc:</span>{" "}
+          {team.clubColors || "N/A"}
         </p>
       </div>
     </div>
