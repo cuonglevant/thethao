@@ -9,7 +9,7 @@ interface TopScorerProps {
 }
 
 export async function TopScorer({
-  title = "TOP SCORERS",
+  title = "Vua phá lưới",
   competitionCode = "CL",
   limit = 10,
 }: TopScorerProps) {

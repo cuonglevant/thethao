@@ -170,12 +170,12 @@ export type RunningCompetition = {
   name: string;
   code: string;
   type: string;
-  emblem: string;
+  emblem: string | null;
 };
 
 export type Contract = {
   start: string;
-  until: string;
+  until: string | null;
 };
 
 export type Coach = {
@@ -240,13 +240,23 @@ export type DetailedPlayer = {
   lastUpdated: string;
 };
 
+export type PlayerTeam = Team & {
+  area: Area;
+  runningCompetitions: RunningCompetition[];
+  contract: Contract;
+};
+
+export type PlayerDetail = DetailedPlayer & {
+  currentTeam?: PlayerTeam;
+};
+
 export type Scorer = {
   player: DetailedPlayer;
   team: Team;
   playedMatches: number;
   goals: number;
-  assists: number;
-  penalties: number;
+  assists: number | null;
+  penalties: number | null;
 };
 
 export type ScorersResponse = {

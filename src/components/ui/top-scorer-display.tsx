@@ -48,8 +48,8 @@ export function TopScorerDisplay({
 
   // Use competition name if title is generic
   const displayTitle =
-    title === "TOP SCORERS" && competition
-      ? `TOP SCORERS - ${competition.name}`
+    title === "Vua phá lưới" && competition
+      ? `Vua phá lưới ${competition.name}`
       : title;
 
   return (
@@ -84,8 +84,12 @@ export function TopScorerDisplay({
                 <div className="font-bold">{scorer.goals}</div>
                 <div className="text-xs text-gray-500">
                   {scorer.playedMatches} matches
-                  {scorer.assists > 0 && `, ${scorer.assists} assists`}
-                  {scorer.penalties > 0 && `, ${scorer.penalties} pen`}
+                  {scorer.assists &&
+                    scorer.assists > 0 &&
+                    `, ${scorer.assists} assists`}
+                  {scorer.penalties &&
+                    scorer.penalties > 0 &&
+                    `, ${scorer.penalties} pen`}
                 </div>
               </div>
             </div>

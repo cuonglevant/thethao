@@ -362,7 +362,7 @@ export function useGetTopScorers(competitionCode = "PL", limit?: number) {
       if (a.playedMatches !== b.playedMatches)
         return a.playedMatches - b.playedMatches;
       // If still equal, sort by more assists
-      return b.assists - a.assists;
+      return (b.assists ?? 0) - (a.assists ?? 0);
     });
   }, [scorers]);
 
@@ -681,8 +681,11 @@ export function useGetTeamMatches(
       }
     });
 
+    // Create a reversed copy of past matches without modifying the original array
+    const reversedPastMatches = [...past].reverse(); // Most recent first
+
     return {
-      pastMatches: past.reverse(), // Most recent first
+      pastMatches: reversedPastMatches,
       upcomingMatches: upcoming, // Soonest first
     };
   }, [matches]);
