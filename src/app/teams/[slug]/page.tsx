@@ -1,9 +1,12 @@
 "use client";
 
-import { useParams, usePathname } from "next/navigation";
+import { useState } from "react";
+import { useParams } from "next/navigation";
 import Image from "next/image";
-import Link from "next/link";
-import { useGetTeamById } from "@/lib/useGetData";
+import { useGetTeamById } from "@/lib/api-client";
+import TeamOverview from "./components/TeamOverview";
+import TeamSchedule from "./components/TeamSchedule";
+import TeamSquad from "./components/TeamSquad"; // Import the new component
 
 const TEAM_TABS = [
   { id: "tom-tat", label: "TÓM TẮT" },
@@ -14,85 +17,16 @@ const TEAM_TABS = [
   { id: "doi-hinh", label: "ĐỘI HÌNH" },
 ];
 
-// Add proper typing for the TeamContent component
-interface TeamContentProps {
-  loading: boolean;
-  error: string | null; // Change from string to string | null
-  team: any;
-}
-
-// Helper function to render team content based on loading state
-function TeamContent({ loading, error, team }: TeamContentProps) {
-  if (loading) {
-    return <p>Đang tải thông tin đội bóng...</p>;
-  }
-
-  if (error) {
-    return <p className="text-red-500">Lỗi: {error}</p>;
-  }
-
-  if (!team) {
-    return <p>Không có thông tin chi tiết về đội bóng.</p>;
-  }
-
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <div>
-        <h3 className="font-medium mb-2">Thông tin cơ bản</h3>
-        <p>
-          <span className="font-medium">Tên đầy đủ:</span> {team.name || "N/A"}
-        </p>
-        <p>
-          <span className="font-medium">Tên ngắn:</span>{" "}
-          {team.shortName || "N/A"}
-        </p>
-        <p>
-          <span className="font-medium">Thành lập:</span>{" "}
-          {team.founded || "N/A"}
-        </p>
-        <p>
-          <span className="font-medium">Sân vận động:</span>{" "}
-          {team.venue || "N/A"}
-        </p>
-      </div>
-      <div>
-        <h3 className="font-medium mb-2">Liên hệ</h3>
-        <p>
-          <span className="font-medium">Địa chỉ:</span> {team.address || "N/A"}
-        </p>
-        <p>
-          <span className="font-medium">Website:</span> {team.website || "N/A"}
-        </p>
-        <p>
-          <span className="font-medium">Màu sắc:</span>{" "}
-          {team.clubColors || "N/A"}
-        </p>
-      </div>
-    </div>
-  );
-}
-
 export default function TeamPage() {
   const params = useParams();
-  const pathname = usePathname();
   const slug = params.slug as string;
-
-  // Extract team ID from the slug (format: "66-manchester-united")
   const teamId = Number(slug.split("-")[0]);
-
-  // Fetch team data using the hook
   const { team, loading, error } = useGetTeamById(teamId);
-
-  // Determine active tab
-  const activeTab = TEAM_TABS.find(
-    (tab) => pathname === `/teams/${slug}/${tab.id}`
-  )
-    ? pathname.split("/").pop()
-    : "tom-tat";
-
-  // Format team name from slug if team data isn't loaded yet
   const displayName =
     team?.name || slug.replace(/^\d+-/, "").replace(/-/g, " ");
+
+  // Use state to track the active tab instead of URL
+  const [activeTab, setActiveTab] = useState("tom-tat");
 
   return (
     <div className="space-y-4">
@@ -108,9 +42,7 @@ export default function TeamPage() {
             />
           </div>
           <div>
-            <h1 className="text-2xl font-bold uppercase">
-              {team?.name || displayName}
-            </h1>
+            <h1 className="text-2xl font-bold uppercase">{displayName}</h1>
             <p className="text-blue-600">
               {team?.area?.name || "Chưa có thông tin"} • Thành lập:{" "}
               {team?.founded || "N/A"}
@@ -121,12 +53,12 @@ export default function TeamPage() {
 
       {/* Navigation Tabs */}
       <div className="bg-white rounded-lg shadow">
-        <div className="border-b overflow-x-auto">
+        <div className="overflow-x-auto">
           <nav className="flex">
             {TEAM_TABS.map((tab) => (
-              <Link
+              <button
                 key={tab.id}
-                href={`/teams/${slug}/${tab.id}`}
+                onClick={() => setActiveTab(tab.id)}
                 className={`px-3 py-3 text-sm font-medium whitespace-nowrap border-b-2 ${
                   activeTab === tab.id
                     ? "border-blue-600 text-blue-600"
@@ -134,18 +66,57 @@ export default function TeamPage() {
                 }`}
               >
                 {tab.label}
-              </Link>
+              </button>
             ))}
           </nav>
         </div>
 
-        {/* Team overview section - only shows on the main route */}
+        {/* Tab Content */}
         <div className="p-4">
-          <h2 className="text-xl font-bold text-blue-600 mb-4">
-            Tổng quan về {team?.name || displayName}
-          </h2>
+          {activeTab === "tom-tat" && (
+            <TeamOverview
+              loading={loading}
+              error={error}
+              team={team}
+              displayName={displayName}
+            />
+          )}
 
-          <TeamContent loading={loading} error={error} team={team} />
+          {activeTab === "lich-thi-dau" && (
+            <TeamSchedule teamId={teamId} displayName={displayName} />
+          )}
+
+          {activeTab === "doi-hinh" && (
+            <TeamSquad
+              team={team}
+              loading={loading}
+              error={error}
+              displayName={displayName}
+            />
+          )}
+
+          {/* Add more tab content components as needed */}
+          {activeTab === "live" && (
+            <div>
+              <h2 className="text-xl font-bold text-blue-600 mb-4">
+                Trận đấu trực tiếp của {displayName}
+              </h2>
+              <p>Hiện không có trận đấu trực tiếp nào.</p>
+            </div>
+          )}
+
+          {/* Default message for tabs not yet implemented */}
+          {!["tom-tat", "lich-thi-dau", "live", "doi-hinh"].includes(
+            activeTab
+          ) && (
+            <div>
+              <h2 className="text-xl font-bold text-blue-600 mb-4">
+                {TEAM_TABS.find((t) => t.id === activeTab)?.label} -{" "}
+                {displayName}
+              </h2>
+              <p>Nội dung đang được xây dựng.</p>
+            </div>
+          )}
         </div>
       </div>
     </div>

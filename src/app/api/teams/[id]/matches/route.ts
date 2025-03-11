@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const API_TOKEN = process.env.NEXT_PUBLIC_API_TOKEN;
-const BASE_URL =
+const API_URL =
   process.env.NEXT_PUBLIC_API_URL || "https://api.football-data.org/v4";
+const API_KEY = process.env.NEXT_PUBLIC_API_TOKEN;
 
 export async function GET(
   request: NextRequest,
@@ -12,59 +12,53 @@ export async function GET(
     const teamId = params.id;
     const { searchParams } = new URL(request.url);
 
-    // Get parameters from request
+    // Get query parameters
     const dateFrom = searchParams.get("dateFrom");
     const dateTo = searchParams.get("dateTo");
+
+    // Handle status parameter correctly
+    // The Football API expects status as a single value or comma-separated without spaces
     const status = searchParams.get("status");
 
-    console.log(`Fetching team matches for team ID: ${teamId}`, {
-      dateFrom,
-      dateTo,
-      status,
-    });
-
-    // Build the URL with query parameters
+    // Build API URL with query parameters
+    const endpoint = `${API_URL}/teams/${teamId}/matches`;
     const apiParams = new URLSearchParams();
 
-    // Add parameters if they exist
     if (dateFrom) apiParams.append("dateFrom", dateFrom);
     if (dateTo) apiParams.append("dateTo", dateTo);
+
+    // Football-data.org API expects "status" not "statuses", fix if needed
     if (status) apiParams.append("status", status);
 
-    // Construct the final URL
-    const url = `${BASE_URL}/teams/${teamId}/matches${
-      apiParams.toString() ? "?" + apiParams.toString() : ""
-    }`;
+    // Append parameters if any exist
+    const url = apiParams.toString() ? `${endpoint}?${apiParams}` : endpoint;
 
-    console.log(`Calling football-data.org API: ${url}`);
+    console.log(`Fetching team matches from: ${url}`);
 
+    // Make request to football data API
     const response = await fetch(url, {
       headers: {
-        "X-Auth-Token": API_TOKEN || "",
-        Accept: "application/json",
+        "X-Auth-Token": API_KEY || "",
       },
-      next: { revalidate: 3600 },
+      next: { revalidate: 3600 }, // Cache for 1 hour
     });
 
     if (!response.ok) {
-      const errorText = await response.text();
-      console.error(`Error from football API: ${response.status}`, errorText);
+      console.error(
+        `Football API error: ${response.status} ${response.statusText}`
+      );
       return NextResponse.json(
-        { error: `Football API error: ${response.status}` },
+        { error: `Failed to fetch team matches: ${response.statusText}` },
         { status: response.status }
       );
     }
 
     const data = await response.json();
-    console.log(
-      `Retrieved ${data.matches?.length || 0} matches for team ${teamId}`
-    );
-
     return NextResponse.json(data);
   } catch (error) {
-    console.error("Error fetching team matches:", error);
+    console.error("Error in team matches API route:", error);
     return NextResponse.json(
-      { error: "Server error while fetching matches" },
+      { error: "Failed to fetch team matches" },
       { status: 500 }
     );
   }

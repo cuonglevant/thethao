@@ -8,7 +8,7 @@ const nextConfig: NextConfig = {
         hostname: "crests.football-data.org",
       },
       {
-        hostname: "crests.football-data.org",
+        hostname: "via.placeholder.com",
       },
     ],
   },

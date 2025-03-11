@@ -3,54 +3,150 @@
 import { useState, useEffect } from "react";
 import { MatchSchedule } from "./match-schedule";
 import { useGetMatchesByDate } from "@/hooks/useGetMatchesByDate";
-import { format, addDays } from "date-fns";
+import { format, addDays, subDays } from "date-fns";
 import { vi } from "date-fns/locale";
 
 interface MatchScheduleContainerProps {
   title?: string;
-  days?: number;
+  days?: number; // Keep for backward compatibility
   teamId?: number;
+  dateFrom?: string; // Add explicit date parameters
+  dateTo?: string; // Add explicit date parameters
+  status?: string; // Add explicit status parameter
 }
 
 export function MatchScheduleContainer({
   title = "LỊCH THI ĐẤU",
   days = 1,
   teamId,
-}: MatchScheduleContainerProps) {
-  // Store the dates in state to ensure stable rendering
+  dateFrom: explicitDateFrom,
+  dateTo: explicitDateTo,
+  status: explicitStatus,
+}: Readonly<MatchScheduleContainerProps>) {
+  // Calculate date range state
   const [dateRange, setDateRange] = useState(() => {
+    // Use explicit dates if provided
+    if (explicitDateFrom && explicitDateTo) {
+      return {
+        dateFrom: explicitDateFrom,
+        dateTo: explicitDateTo,
+        formattedToday: format(new Date(), "d/M"),
+      };
+    }
+
+    // Otherwise calculate from days parameter
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    return {
-      dateFrom: format(today, "yyyy-MM-dd"),
-      dateTo: format(addDays(today, days), "yyyy-MM-dd"),
-      formattedToday: format(today, "d/M"),
-    };
+    if (days >= 0) {
+      // For upcoming matches (from today to N days in future)
+      return {
+        dateFrom: format(today, "yyyy-MM-dd"),
+        dateTo: format(addDays(today, days), "yyyy-MM-dd"),
+        formattedToday: format(today, "d/M"),
+      };
+    } else {
+      // For past matches (from N days ago to yesterday)
+      const pastDays = Math.abs(days);
+      return {
+        dateFrom: format(subDays(today, pastDays), "yyyy-MM-dd"),
+        dateTo: format(subDays(today, 1), "yyyy-MM-dd"), // Yesterday
+        formattedToday: format(today, "d/M"),
+      };
+    }
   });
 
-  // For team schedules, use a longer date range if no matches found
+  // Track if we've already tried extending the range
   const [extendedRange, setExtendedRange] = useState(false);
 
-  // Fetch matches using your hook
+  // Use explicit status if provided, otherwise calculate from days
+  const status =
+    explicitStatus ||
+    (days >= 0
+      ? "SCHEDULED,TIMED,IN_PLAY,PAUSED" // For upcoming matches
+      : "FINISHED"); // For past matches
+
+  // Fetch matches using your hook with the corrected parameters
   const { matchesByDate, loading, error } = useGetMatchesByDate(
     dateRange.dateFrom,
-    extendedRange ? undefined : dateRange.dateTo, // Skip dateTo for extended range
-    teamId
+    dateRange.dateTo,
+    teamId,
+    status // Pass the appropriate status
   );
 
   // Check if we found any matches
   const hasMatches = Object.keys(matchesByDate || {}).length > 0;
 
-  // If teamId is provided and no matches found, try with extended range
+  // Debug logging
+  useEffect(() => {
+    console.log("MatchScheduleContainer params:", {
+      dateFrom: dateRange.dateFrom,
+      dateTo: dateRange.dateTo,
+      teamId,
+      status,
+      hasMatches,
+      loading,
+      error,
+    });
+  }, [
+    dateRange.dateFrom,
+    dateRange.dateTo,
+    teamId,
+    status,
+    hasMatches,
+    loading,
+    error,
+  ]);
+
+  // Extend search range if no matches found
   useEffect(() => {
     if (!loading && !error && teamId && !hasMatches && !extendedRange) {
       console.log(
         "No matches found for team in date range, extending search..."
       );
+
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      // Don't extend if using explicit dates
+      if (explicitDateFrom && explicitDateTo) {
+        setExtendedRange(true);
+        return;
+      }
+
+      // Extend the range
+      if (days >= 0) {
+        // For upcoming, look further into the future (next 90 days)
+        const newDateRange = {
+          dateFrom: format(today, "yyyy-MM-dd"),
+          dateTo: format(addDays(today, 90), "yyyy-MM-dd"),
+          formattedToday: format(today, "d/M"),
+        };
+        console.log("Extending upcoming range to:", newDateRange);
+        setDateRange(newDateRange);
+      } else {
+        // For past, look further back (last 90 days)
+        const newDateRange = {
+          dateFrom: format(subDays(today, 90), "yyyy-MM-dd"),
+          dateTo: format(subDays(today, 1), "yyyy-MM-dd"),
+          formattedToday: format(today, "d/M"),
+        };
+        console.log("Extending past range to:", newDateRange);
+        setDateRange(newDateRange);
+      }
+
       setExtendedRange(true);
     }
-  }, [loading, error, teamId, hasMatches, extendedRange]);
+  }, [
+    loading,
+    error,
+    teamId,
+    hasMatches,
+    extendedRange,
+    days,
+    explicitDateFrom,
+    explicitDateTo,
+  ]);
 
   // Convert to the format expected by MatchSchedule
   const matchDays = Object.entries(matchesByDate || {}).map(
@@ -100,6 +196,9 @@ export function MatchScheduleContainer({
         </div>
         <div className="p-4 text-center text-red-500">
           <p>Lỗi: {error}</p>
+          <p className="text-xs mt-2">
+            Thử lại sau hoặc chọn khoảng thời gian khác.
+          </p>
         </div>
       </div>
     );
@@ -114,7 +213,10 @@ export function MatchScheduleContainer({
         <div className="p-4 text-center text-gray-500">
           <p>
             Không tìm thấy trận đấu nào
-            {teamId ? " cho đội bóng này" : ""} trong thời gian sắp tới
+            {teamId ? " cho đội bóng này" : ""} trong thời gian đã chọn
+          </p>
+          <p className="text-xs mt-2">
+            {dateRange.dateFrom} đến {dateRange.dateTo}
           </p>
         </div>
       </div>

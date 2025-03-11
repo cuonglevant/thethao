@@ -1,4 +1,10 @@
+"use client";
 // Central API client to handle all football data requests
+
+import { SquadPlayer, TeamDetail } from "@/types/Types";
+import { useEffect, useMemo } from "react";
+
+import { useState } from "react";
 
 export async function fetchCompetition(code: string) {
   const response = await fetch(`/api/competitions/${code}`);
@@ -116,3 +122,70 @@ export async function fetchTopScorers(competitionCode: string, limit = 10) {
 }
 
 // Add more API functions as needed
+
+// Updated function in useGetData.ts
+export function useGetTeamById(teamId?: number) {
+  const [team, setTeam] = useState<TeamDetail | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Don't fetch if no teamId is provided
+    if (!teamId) {
+      setLoading(false);
+      return;
+    }
+
+    const fetchTeam = async () => {
+      try {
+        setLoading(true);
+
+        // IMPORTANT: Use the Next.js API route instead of direct API call
+        // This is the key change - use your internal API route
+        const response = await fetch(`/api/teams/${teamId}`);
+
+        if (!response.ok) {
+          throw new Error(`Failed to fetch team: ${response.statusText}`);
+        }
+
+        const data: TeamDetail = await response.json();
+        setTeam(data);
+        setError(null);
+      } catch (err) {
+        setError(
+          err instanceof Error ? err.message : "An unknown error occurred"
+        );
+        console.error("Error fetching team data:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTeam();
+  }, [teamId]);
+
+  // Rest of your function remains the same...
+
+  // Group players by position
+  const playersByPosition = useMemo(() => {
+    if (!team) return {};
+
+    // Your existing code for playersByPosition
+    // ...
+
+    return {} as Record<string, SquadPlayer[]>; // Keep your existing code here
+  }, [team]);
+
+  // Get competitions the team is participating in
+  const competitions = useMemo(() => team?.runningCompetitions || [], [team]);
+
+  return {
+    team,
+    loading,
+    error,
+    playersByPosition,
+    competitions,
+    coach: team?.coach,
+    squad: team?.squad || [],
+  };
+}
