@@ -57,7 +57,6 @@ export default function HomePage() {
                 dateFrom={format(subDays(new Date(), 10), "yyyy-MM-dd")} // Look back 10 days instead of 5
                 dateTo={format(subDays(new Date(), 1), "yyyy-MM-dd")}
                 status="FINISHED"
-                limit={20} // Add limit parameter
               />
             </div>
 
