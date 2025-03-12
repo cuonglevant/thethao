@@ -4,8 +4,6 @@ import {
   Season,
   Match,
   MatchesResponse,
-  StandingsResponse,
-  StandingTable,
   TeamsResponse,
   TeamDetail,
   SquadPlayer,

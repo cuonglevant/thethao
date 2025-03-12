@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const API_URL =
-  process.env.NEXT_PUBLIC_API_URL || "https://api.football-data.org/v4";
-const API_KEY = process.env.NEXT_PUBLIC_API_TOKEN;
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+const API_TOKEN = process.env.NEXT_PUBLIC_API_TOKEN;
 
 export async function GET(
   request: NextRequest,
@@ -38,7 +37,7 @@ export async function GET(
     // Make request to football data API
     const response = await fetch(url, {
       headers: {
-        "X-Auth-Token": API_KEY || "",
+        "X-Auth-Token": API_TOKEN || "",
       },
       next: { revalidate: 3600 }, // Cache for 1 hour
     });

@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 
-const API_TOKEN = "587278a62d85417da12bfd8bccc0d284";
+const API_URL =
+  process.env.NEXT_PUBLIC_API_URL || "https://api.football-data.org/v4";
+const API_TOKEN = process.env.NEXT_PUBLIC_API_TOKEN;
 
 export async function GET(
   request: Request,
@@ -13,15 +15,12 @@ export async function GET(
       `Proxying request to football-data.org for ${code} competition...`
     );
 
-    const response = await fetch(
-      `https://api.football-data.org/v4/competitions/${code}`,
-      {
-        headers: {
-          "X-Auth-Token": API_TOKEN,
-        },
-        next: { revalidate: 86400 }, // Cache for 24 hours
-      }
-    );
+    const response = await fetch(`${API_URL}/competitions/${code}`, {
+      headers: {
+        "X-Auth-Token": API_TOKEN || "",
+      },
+      next: { revalidate: 86400 }, // Cache for 24 hours
+    });
 
     if (!response.ok) {
       const errorText = await response.text();

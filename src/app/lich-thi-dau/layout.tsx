@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import { format, startOfWeek, addDays, isSameDay } from "date-fns";
+import { add, format, isSameDay } from "date-fns";
 import { vi } from "date-fns/locale";
 
 // Create simple context for date selection
@@ -12,18 +12,17 @@ export const DateContext = createContext({
   setSelectedDate: (date: string) => {},
 });
 
-const DAYS = [
-  "Chủ nhật",
-  "Thứ hai",
-  "Thứ ba",
-  "Thứ tư",
-  "Thứ năm",
-  "Thứ sáu",
-  "Thứ bảy",
-];
+// Add this interface at the top of your file
+interface DateTab {
+  date: Date;
+  key: string;
+  label: string;
+  dayName: string;
+  isToday: boolean;
+}
 
 // Component that renders only on the client side
-function ClientOnly({ children }) {
+function ClientOnly({ children }: { children: React.ReactNode }) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -54,48 +53,27 @@ export default function MatchScheduleLayout({
 }) {
   // Use server-safe initial values
   const [selectedDate, setSelectedDate] = useState("");
-  const [dateTabs, setDateTabs] = useState([]);
+  const [dateTabs, setDateTabs] = useState<DateTab[]>([]);
   const [visibleRange, setVisibleRange] = useState([0, 7]); // [start, end) indexes
-  const [dayLabels, setDayLabels] = useState({}); // Map of dates to day labels
 
   // Generate week view centered on today
   useEffect(() => {
-    // Today's date at midnight
     const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    // Generate 14 days (1 week before, 1 week after today)
-    const dates = [];
-    for (let i = -7; i < 7; i++) {
-      const date = new Date(today);
-      date.setDate(today.getDate() + i);
-
-      const isToday = i === 0;
-      const key = format(date, "yyyy-MM-dd");
-
-      dates.push({
+    const dates = Array.from({ length: 15 }, (_, i) => {
+      const date = add(today, { days: i - 4 });
+      const isToday = isSameDay(date, today);
+      return {
         date,
-        key,
-        label: format(date, "d/M"),
+        key: format(date, "yyyy-MM-dd"),
+        label: format(date, "dd/MM"),
         dayName: format(date, "EEEE", { locale: vi }),
         isToday,
-      });
+      };
+    });
 
-      // Store day label information
-      setDayLabels((prev) => ({
-        ...prev,
-        [key]: {
-          label: format(date, "d/M"),
-          dayName: format(date, "EEEE", { locale: vi }),
-          isToday,
-        },
-      }));
-    }
-
-    // Set initial visible range centered on today (indexes 4-10 = 7 days)
     setVisibleRange([4, 11]);
     setDateTabs(dates);
-    setSelectedDate(format(today, "yyyy-MM-dd")); // Default to today
+    setSelectedDate(format(today, "yyyy-MM-dd"));
   }, []);
 
   // Handle navigation

@@ -106,7 +106,7 @@ export default function TeamSquad({
 
         // Remove empty categories
         const filteredPositions: Record<string, any[]> = {};
-        let positionNames: string[] = [];
+        const positionNames: string[] = [];
 
         Object.entries(positionGroups).forEach(([position, players]) => {
           if (players.length > 0) {

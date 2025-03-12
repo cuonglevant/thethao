@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 // Get the API token from environment variables
 const API_TOKEN = process.env.NEXT_PUBLIC_API_TOKEN;
-const BASE_URL = "https://api.football-data.org/v4";
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export async function GET(
   request: NextRequest,
