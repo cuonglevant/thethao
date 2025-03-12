@@ -10,6 +10,7 @@ type LeagueStandingsProps = {
   standings: StandingTable[];
   competitionId?: string;
   highlightPosition?: number[];
+  highlightTeam?: number; // Add this parameter
   isLoading?: boolean;
   limit?: number;
 };
@@ -19,6 +20,7 @@ export const LeagueStandings = ({
   standings,
   competitionId,
   highlightPosition = [1, 2, 3],
+  highlightTeam,
   isLoading = false,
   limit = 10,
 }: LeagueStandingsProps) => {
@@ -77,7 +79,9 @@ export const LeagueStandings = ({
               <tr
                 key={standing.team.id}
                 className={
-                  highlightPosition.includes(standing.position)
+                  highlightTeam === standing.team.id
+                    ? "bg-yellow-100 font-semibold"
+                    : highlightPosition.includes(standing.position)
                     ? "bg-blue-50"
                     : ""
                 }
@@ -86,16 +90,25 @@ export const LeagueStandings = ({
                   {standing.position}
                 </td>
                 <td className="px-3 py-2 whitespace-nowrap">
-                  <div className="flex items-center">
-                    <img
-                      src={standing.team.crest}
-                      alt={standing.team.name}
-                      className="w-5 h-5 mr-2"
-                    />
+                  <Link
+                    href={`/teams/${standing.team.id}-${standing.team.name
+                      .toLowerCase()
+                      .replace(/\s+/g, "-")}`}
+                    className="flex items-center"
+                  >
+                    <div className="w-5 h-5 relative mr-2">
+                      <Image
+                        src={standing.team.crest || "/placeholder.svg"}
+                        alt={standing.team.name}
+                        width={20}
+                        height={20}
+                        className="object-contain"
+                      />
+                    </div>
                     <span className="text-sm font-medium">
                       {standing.team.name}
                     </span>
-                  </div>
+                  </Link>
                 </td>
                 <td className="px-3 py-2 whitespace-nowrap text-center text-sm">
                   {standing.playedGames}

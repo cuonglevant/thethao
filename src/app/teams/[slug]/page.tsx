@@ -6,7 +6,8 @@ import Image from "next/image";
 import { useGetTeamById } from "@/lib/api-client";
 import TeamOverview from "./components/TeamOverview";
 import TeamSchedule from "./components/TeamSchedule";
-import TeamSquad from "./components/TeamSquad"; // Import the new component
+import TeamSquad from "./components/TeamSquad";
+import TeamStanding from "./components/TeamStanding";
 
 const TEAM_TABS = [
   { id: "tom-tat", label: "TÓM TẮT" },
@@ -95,18 +96,12 @@ export default function TeamPage() {
             />
           )}
 
-          {/* Add more tab content components as needed */}
-          {activeTab === "live" && (
-            <div>
-              <h2 className="text-xl font-bold text-blue-600 mb-4">
-                Trận đấu trực tiếp của {displayName}
-              </h2>
-              <p>Hiện không có trận đấu trực tiếp nào.</p>
-            </div>
+          {activeTab === "ket-qua" && (
+            <TeamStanding teamId={teamId} displayName={displayName} />
           )}
 
           {/* Default message for tabs not yet implemented */}
-          {!["tom-tat", "lich-thi-dau", "live", "doi-hinh"].includes(
+          {!["tom-tat", "lich-thi-dau", "doi-hinh", "ket-qua"].includes(
             activeTab
           ) && (
             <div>

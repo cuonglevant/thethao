@@ -8,6 +8,7 @@ type LeagueStandingsContainerProps = {
   competitionCode: string;
   title?: string;
   highlightPosition?: number[];
+  highlightTeam?: number; // Add this parameter
   limit?: number;
 };
 
@@ -15,6 +16,7 @@ export const LeagueStandingsContainer = ({
   competitionCode,
   title = "League Table",
   highlightPosition = [1, 2, 3],
+  highlightTeam, // Add this parameter
   limit = 10,
 }: LeagueStandingsContainerProps) => {
   const { leagueTable, loading, error } = useGetStandingsData(competitionCode);
@@ -25,8 +27,9 @@ export const LeagueStandingsContainer = ({
       loading,
       error,
       tableLength: leagueTable?.length,
+      highlightTeam,
     });
-  }, [competitionCode, loading, error, leagueTable]);
+  }, [competitionCode, loading, error, leagueTable, highlightTeam]);
 
   if (error) {
     return (
@@ -47,6 +50,7 @@ export const LeagueStandingsContainer = ({
       standings={leagueTable || []}
       competitionId={competitionCode}
       highlightPosition={highlightPosition}
+      highlightTeam={highlightTeam} // Pass it down
       isLoading={loading}
       limit={limit}
     />

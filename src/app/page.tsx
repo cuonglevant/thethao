@@ -1,11 +1,12 @@
 import { Sidebar } from "@/components/ui/sidebar";
 import { RightSidebar } from "@/components/ui/right-sidebar";
 import { MainContent } from "@/components/ui/main-content";
-import { MatchSchedule } from "@/components/ui/match-schedule";
-import { TopScorer } from "@/components/ui/top-scorer";
+import { MatchScheduleContainer } from "@/components/ui/match-schedule-container"; // Changed import
 import { ClientLeagueStandingsWrapper } from "@/components/ui/client-league-standings-wrapper";
 import LatestPage from "./latest/page";
 import { LeagueStandingsContainer } from "@/components/ui/league-standings-container";
+import { TopScorerClient } from "@/components/ui/top-scorer-client";
+import { subDays, format } from "date-fns";
 
 export default function HomePage() {
   return (
@@ -21,9 +22,12 @@ export default function HomePage() {
           <div className="lg:col-span-2">
             <MainContent />
 
-            {/* Static Match Schedule */}
+            {/* Dynamic Match Schedule - replaced static component */}
             <div className="mb-6">
-              <MatchSchedule />
+              <MatchScheduleContainer
+                title="LỊCH THI ĐẤU HÔM NAY VÀ NGÀY MAI"
+                days={1} // Show today and tomorrow's matches
+              />
             </div>
 
             {/* Client Components Section with League Standings */}
@@ -43,10 +47,21 @@ export default function HomePage() {
 
             {/* Top Scorer Section */}
             <div className="mb-6">
-              <TopScorer competitionCode="CL" limit={10} />
+              <TopScorerClient competitionCode="PL" limit={10} />
             </div>
 
-            {/* Static League Standings */}
+            {/* Recent Results (Past Matches) */}
+            <div className="mb-6">
+              <MatchScheduleContainer
+                title="KẾT QUẢ GẦN ĐÂY"
+                dateFrom={format(subDays(new Date(), 10), "yyyy-MM-dd")} // Look back 10 days instead of 5
+                dateTo={format(subDays(new Date(), 1), "yyyy-MM-dd")}
+                status="FINISHED"
+                limit={20} // Add limit parameter
+              />
+            </div>
+
+            {/* League Standings */}
             <div className="mb-6">
               <LeagueStandingsContainer
                 competitionCode="PL"

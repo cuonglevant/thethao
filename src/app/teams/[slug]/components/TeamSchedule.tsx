@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useGetTeamById } from "@/lib/api-client";
-import { format, addDays, addMonths } from "date-fns"; // Added addMonths for better ranges
+import { format, addDays, subDays } from "date-fns"; // Changed to use subDays instead of addMonths
 import { vi } from "date-fns/locale";
 import Image from "next/image";
 import { MatchScheduleContainer } from "@/components/ui/match-schedule-container";
@@ -64,24 +64,28 @@ export default function TeamSchedule({
   // Date tabs for upcoming and past matches
   const [dateView, setDateView] = useState<"upcoming" | "past">("upcoming");
 
-  // Use fixed date ranges as specified
+  // Calculate dynamic date ranges based on the current date
+  const today = new Date();
   const dateRanges = {
     upcoming: {
-      // Fixed dates as specified
-      dateFrom: "2025-03-11",
-      dateTo: "2025-04-10",
+      // Next 30 days
+      dateFrom: format(today, "yyyy-MM-dd"),
+      dateTo: format(addDays(today, 30), "yyyy-MM-dd"),
       status: "SCHEDULED,TIMED,IN_PLAY,PAUSED",
     },
     past: {
-      // Fixed dates as specified
-      dateFrom: "2025-01-10",
-      dateTo: "2025-03-10",
+      // Last 30 days
+      dateFrom: format(subDays(today, 30), "yyyy-MM-dd"),
+      dateTo: format(subDays(today, 1), "yyyy-MM-dd"), // Yesterday
       status: "FINISHED",
     },
   };
 
-  // Log current state
-  console.log(`TeamSchedule - Current view: ${dateView}`, dateRanges[dateView]);
+  // Log current state and dates for debugging
+  console.log(`TeamSchedule - Current view: ${dateView}`, {
+    ...dateRanges[dateView],
+    currentDate: format(today, "yyyy-MM-dd"),
+  });
 
   return (
     <div>

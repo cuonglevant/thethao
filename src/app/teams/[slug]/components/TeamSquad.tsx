@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import PlayerDetail from "./PlayerDetail";
 import { TeamDetail } from "@/types/Types";
@@ -19,6 +19,102 @@ export default function TeamSquad({
   displayName,
 }: TeamSquadProps) {
   const [selectedPlayer, setSelectedPlayer] = useState<any>(null);
+  const [playersByPosition, setPlayersByPosition] = useState<
+    Record<string, any[]>
+  >({});
+  const [allPositions, setAllPositions] = useState<string[]>([]);
+  const [ungroupedPlayers, setUngroupedPlayers] = useState<any[]>([]);
+
+  // Group players by position using the custom mapping
+  useEffect(() => {
+    if (team?.squad) {
+      console.log("Team squad data:", team.squad);
+      console.log(`Total squad size: ${team.squad.length} players`);
+
+      // Define position categories and mapping
+      const positions: Record<string, any[]> = {
+        "Thủ môn": [],
+        "Hậu vệ": [],
+        "Trung vệ": [],
+        "Tiền vệ": [],
+        "Tiền đạo": [],
+        "Tiền đạo cánh trái": [],
+        "Tiền đạo cánh phải": [],
+        "Hậu vệ cánh trái": [],
+        "Hậu vệ cánh phải": [],
+        Khác: [], // For players that don't fit elsewhere
+      };
+
+      const positionMapping: Record<string, string> = {
+        Goalkeeper: "Thủ môn",
+        Defence: "Hậu vệ",
+        Defender: "Hậu vệ",
+        Midfield: "Tiền vệ",
+        Midfielder: "Tiền vệ",
+        Offence: "Tiền đạo",
+        Attacker: "Tiền đạo",
+        Forward: "Tiền đạo",
+        "Right Winger": "Tiền đạo cánh phải",
+        "Left Winger": "Tiền đạo cánh trái",
+        "Centre-Forward": "Tiền đạo",
+        "Centre-Back": "Trung vệ",
+        "Defensive Midfield": "Tiền vệ",
+        "Right-Back": "Hậu vệ cánh phải",
+        "Left-Back": "Hậu vệ cánh trái",
+        "Attacking Midfield": "Tiền vệ",
+        "Central Midfield": "Tiền vệ",
+      };
+
+      // Track players that don't fit into any category
+      const unmatched: any[] = [];
+
+      // Group players by position
+      team.squad.forEach((player) => {
+        const positionName = player.position;
+        const mappedPosition = positionName
+          ? positionMapping[positionName]
+          : null;
+
+        if (mappedPosition && positions[mappedPosition]) {
+          positions[mappedPosition].push(player);
+        } else {
+          positions["Khác"].push(player);
+          unmatched.push(player);
+        }
+      });
+
+      // Remove empty position categories
+      const filteredPositions = Object.entries(positions)
+        .filter(([_, players]) => players.length > 0)
+        .reduce((obj, [position, players]) => {
+          obj[position] = players;
+          return obj;
+        }, {} as Record<string, any[]>);
+
+      // Set state
+      setPlayersByPosition(filteredPositions);
+      setAllPositions(Object.keys(filteredPositions));
+      setUngroupedPlayers(unmatched);
+
+      // Debug output
+      console.log("Players grouped by position:", filteredPositions);
+      console.log(`Ungrouped players: ${unmatched.length}`);
+
+      // Count players in each position
+      Object.entries(filteredPositions).forEach(([position, players]) => {
+        console.log(`${position}: ${players.length} players`);
+      });
+
+      // Verify all players are accounted for
+      const totalGrouped = Object.values(filteredPositions).reduce(
+        (sum, players) => sum + players.length,
+        0
+      );
+      console.log(
+        `Total players grouped: ${totalGrouped}/${team.squad.length}`
+      );
+    }
+  }, [team?.squad]);
 
   if (loading) {
     return <p>Đang tải thông tin đội hình...</p>;
@@ -32,29 +128,24 @@ export default function TeamSquad({
     return <p>Không có thông tin về đội hình của {displayName}</p>;
   }
 
-  // Group players by position
-  const playersByPosition = team.squad.reduce((acc, player) => {
-    const position = player.position || "Không xác định";
-    if (!acc[position]) {
-      acc[position] = [];
-    }
-    acc[position].push(player);
-    return acc;
-  }, {} as Record<string, any[]>);
-
-  // Define position order
+  // Define position display order (in Vietnamese)
   const positionOrder = [
-    "Goalkeeper",
-    "Defence",
-    "Midfield",
-    "Offence",
-    "Không xác định",
+    "Khác",
+    "Tiền đạo",
+    "Tiền đạo cánh trái",
+    "Tiền đạo cánh phải",
+    "Tiền vệ",
+    "Trung vệ",
+    "Hậu vệ cánh trái",
+    "Hậu vệ cánh phải",
+    "Hậu vệ",
+    "Thủ môn",
   ];
 
   return (
     <div className="space-y-6">
       <h2 className="text-xl font-bold text-blue-600 mb-4">
-        Đội hình của {displayName}
+        Đội hình của {displayName} ({team.squad.length} thành viên)
       </h2>
 
       {selectedPlayer ? (
@@ -81,53 +172,57 @@ export default function TeamSquad({
         </div>
       ) : (
         <div className="space-y-6">
-          {positionOrder.map((position) => {
-            const players = playersByPosition[position];
-            if (!players || players.length === 0) return null;
+          {/* Position groups display - only show this view */}
+          {positionOrder
+            .filter((position) => playersByPosition[position]?.length > 0)
+            .map((position) => {
+              const players = playersByPosition[position];
+              if (!players || players.length === 0) return null;
 
-            return (
-              <div key={position} className="bg-white rounded-lg shadow p-4">
-                <h3 className="text-lg font-bold mb-3">
-                  {position === "Goalkeeper"
-                    ? "Thủ môn"
-                    : position === "Defence"
-                    ? "Hậu vệ"
-                    : position === "Midfield"
-                    ? "Tiền vệ"
-                    : position === "Offence"
-                    ? "Tiền đạo"
-                    : "Không xác định"}
-                </h3>
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                  {players.map((player) => (
-                    <div
-                      key={player.id}
-                      className="bg-gray-50 rounded p-3 text-center cursor-pointer hover:bg-blue-50 transition-colors"
-                      onClick={() => setSelectedPlayer(player)}
-                    >
-                      <div className="relative w-16 h-16 mx-auto bg-gray-200 rounded-full mb-2 overflow-hidden">
-                        <Image
-                          src={`https://via.placeholder.com/100/f5f5f5/2563eb?text=${player.name.charAt(
-                            0
-                          )}`}
-                          alt={player.name}
-                          width={100}
-                          height={100}
-                          className="object-cover"
-                        />
-                      </div>
-                      <p className="font-medium truncate">{player.name}</p>
-                      {player.shirtNumber && (
-                        <p className="text-sm text-gray-600">
-                          #{player.shirtNumber}
+              return (
+                <div key={position} className="bg-white rounded-lg shadow p-4">
+                  <h4 className="font-bold mb-2">
+                    {position} ({players.length})
+                  </h4>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                    {players.map((player) => (
+                      <div
+                        key={player.id}
+                        className="bg-gray-50 rounded p-3 text-center cursor-pointer hover:bg-blue-50 transition-colors relative group"
+                        onClick={() => setSelectedPlayer(player)}
+                      >
+                        <div className="relative w-16 h-16 mx-auto bg-gray-200 rounded-full mb-2 overflow-hidden">
+                          <Image
+                            src={`https://via.placeholder.com/100/f5f5f5/2563eb?text=${player.name.charAt(
+                              0
+                            )}`}
+                            alt={player.name}
+                            width={100}
+                            height={100}
+                            className="object-cover"
+                          />
+                        </div>
+
+                        {/* Name with custom tooltip only (no default tooltip) */}
+                        <div className="relative">
+                          {/* Removed title attribute to disable default tooltip */}
+                          <p className="font-medium truncate">{player.name}</p>
+
+                          {/* Custom tooltip that appears on hover */}
+                          <div className="opacity-0 invisible group-hover:visible group-hover:opacity-100 transition-opacity duration-200 absolute z-10 -top-2 left-1/2 transform -translate-x-1/2 -translate-y-full bg-gray-800 text-white text-xs rounded py-1 px-2 whitespace-nowrap">
+                            {player.name}
+                          </div>
+                        </div>
+
+                        <p className="text-xs text-gray-600">
+                          {player.nationality || ""}
                         </p>
-                      )}
-                    </div>
-                  ))}
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
         </div>
       )}
     </div>
