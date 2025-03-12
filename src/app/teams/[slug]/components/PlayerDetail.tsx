@@ -46,6 +46,11 @@ export default function PlayerDetail({ player }: PlayerDetailProps) {
     ? format(parseISO(player.dateOfBirth), "dd/MM/yyyy")
     : "N/A";
 
+  // Get player initial for displaying
+  const playerInitial = player.name.charAt(0).toUpperCase();
+
+  console.log(player);
+
   return (
     <div className="bg-white rounded-lg shadow overflow-hidden">
       <div className="bg-blue-600 text-white p-4">
@@ -58,13 +63,15 @@ export default function PlayerDetail({ player }: PlayerDetailProps) {
         <div className="md:w-1/3 flex justify-center mb-4 md:mb-0">
           <div className="relative w-48 h-48 bg-gray-100 rounded-full overflow-hidden border-4 border-blue-100">
             <Image
-              src={`https://via.placeholder.com/300/f5f5f5/2563eb?text=${player.name.charAt(
-                0
-              )}`}
+              src="/placeholder.png"
               alt={player.name}
               fill
               className="object-cover"
             />
+            {/* Display player initial */}
+            {/* <div className="absolute inset-0 flex items-center justify-center text-4xl font-bold text-blue-600">
+              {playerInitial}
+            </div> */}
             {player.shirtNumber && (
               <div className="absolute bottom-0 right-0 bg-blue-600 text-white w-10 h-10 rounded-full flex items-center justify-center font-bold">
                 {player.shirtNumber}
@@ -133,6 +140,7 @@ export default function PlayerDetail({ player }: PlayerDetailProps) {
                   width={40}
                   height={40}
                   className="object-contain"
+                  unoptimized
                 />
                 <div>
                   <p className="font-medium">{player.currentTeam.name}</p>
