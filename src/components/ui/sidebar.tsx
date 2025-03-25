@@ -4,6 +4,7 @@ import { NavItem } from "./nav-item";
 import { LeagueItem } from "./league-item";
 import Image from "next/image";
 import { useState, useRef, useEffect } from "react";
+import { useGetCompetitions } from "@/lib/useGetData";
 
 const navigationItems = [
   {
@@ -102,94 +103,12 @@ const navigationItems = [
   },
 ];
 
-const leagueItems = [
-  {
-    href: "/v-league-1",
-    imageSrc: "/leagues/vleague1.png",
-    name: "V.LEAGUE 1",
-  },
-  {
-    href: "/ngoai-hang-anh",
-    imageSrc: "/leagues/premier-league.png",
-    name: "NGOẠI HẠNG ANH",
-  },
-  {
-    href: "/v-league-2",
-    imageSrc: "/leagues/vleague2.png",
-    name: "V.LEAGUE 2",
-  },
-  {
-    href: "/cup-c1",
-    imageSrc: "/leagues/champions-league.png",
-    name: "CUP C1",
-  },
-  {
-    href: "/la-liga",
-    imageSrc: "/leagues/laliga.png",
-    name: "LA LIGA",
-  },
-  {
-    href: "/ligue-1",
-    imageSrc: "/leagues/ligue1.png",
-    name: "LIGUE 1",
-  },
-  {
-    href: "/bundesliga",
-    imageSrc: "/leagues/bundesliga.png",
-    name: "BUNDESLIGA",
-  },
-  {
-    href: "/serie-a",
-    imageSrc: "/leagues/serie-a.png",
-    name: "SERIE A",
-  },
-  {
-    href: "/cup-c2",
-    imageSrc: "/leagues/europa-league.png",
-    name: "CUP C2",
-  },
-  {
-    href: "/afc-champions-league",
-    imageSrc: "/leagues/afc-champions.png",
-    name: "AFC CHAMPIONS LEAGUE",
-  },
-  {
-    href: "/efl-cup",
-    imageSrc: "/leagues/efl-cup.png",
-    name: "EFL CUP",
-  },
-  {
-    href: "/mls",
-    imageSrc: "/leagues/mls.png",
-    name: "MLS",
-  },
-  {
-    href: "/fa-cup",
-    imageSrc: "/leagues/fa-cup.png",
-    name: "FA CUP",
-  },
-  {
-    href: "/saudi-pro-league",
-    imageSrc: "/leagues/saudi-league.png",
-    name: "SAUDI PRO LEAGUE",
-  },
-  {
-    href: "/world-cup-2026",
-    imageSrc: "/leagues/world-cup.png",
-    name: "WORLD CUP 2026",
-  },
-  {
-    href: "/asian-cup",
-    imageSrc: "/leagues/asian-cup.png",
-    name: "ASIAN CUP",
-  },
-];
-
 export function Sidebar() {
   const [isDragging, setIsDragging] = useState(false);
   const [scrollPosition, setScrollPosition] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
+  const { competitions, loading } = useGetCompetitions();
 
   const handleScroll = () => {
     if (contentRef.current && containerRef.current) {
@@ -250,9 +169,20 @@ export function Sidebar() {
 
         {/* League Navigation */}
         <div className="py-2">
-          {leagueItems.map((item) => (
-            <LeagueItem key={item.href} {...item} />
-          ))}
+          {loading ? (
+            <div className="flex justify-center p-4">
+              <div className="animate-spin h-5 w-5 border-2 border-gray-400 rounded-full border-t-transparent"></div>
+            </div>
+          ) : (
+            competitions.map((competition) => (
+              <LeagueItem
+                key={competition.code}
+                href={`/leagues/${competition.code.toLowerCase()}`}
+                imageSrc={competition.emblem}
+                name={competition.name}
+              />
+            ))
+          )}
         </div>
       </div>
 

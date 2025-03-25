@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { MatchSchedule } from "@/components/ui/match-schedule";
-import { LeagueStandings } from "@/components/ui/league-standings";
 import { TopScorer } from "@/components/ui/top-scorer";
 import { GridFeatureArticle } from "@/components/ui/grid-feature-article";
 import { GridArticle } from "@/components/ui/grid-article";

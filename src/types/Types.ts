@@ -41,10 +41,15 @@ export type Area = {
 
 export type Competition = {
   id: number;
+  area: Area;
   name: string;
   code: string;
   type: string;
   emblem: string;
+  plan?: string;
+  currentSeason?: Season;
+  numberOfAvailableSeasons?: number;
+  lastUpdated?: string;
 };
 
 // New types for match data

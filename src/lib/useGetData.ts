@@ -921,3 +921,61 @@ export function useGetHeadToHead(
     error,
   };
 }
+
+// Add this new hook for fetching competitions
+export function useGetCompetitions(plan = "TIER_ONE") {
+  const [competitions, setCompetitions] = useState<Competition[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchCompetitions = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        // Use the Next.js API route instead of direct API call
+        const baseUrl =
+          process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+        const url = new URL("/api/competitions", baseUrl);
+
+        if (plan) {
+          url.searchParams.append("plan", plan);
+        }
+
+        console.log(`Fetching competitions from: ${url.toString()}`);
+
+        const response = await fetch(url.toString());
+
+        if (!response.ok) {
+          throw new Error(
+            `Failed to fetch competitions: ${response.statusText}`
+          );
+        }
+
+        const data = await response.json();
+        setCompetitions(data.competitions || []);
+      } catch (err) {
+        setError(
+          err instanceof Error ? err.message : "An unknown error occurred"
+        );
+        console.error("Error fetching competitions:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCompetitions();
+  }, [plan]);
+
+  // Sort competitions by name
+  const sortedCompetitions = useMemo(() => {
+    return [...competitions].sort((a, b) => a.name.localeCompare(b.name));
+  }, [competitions]);
+
+  return {
+    competitions: sortedCompetitions,
+    loading,
+    error,
+  };
+}

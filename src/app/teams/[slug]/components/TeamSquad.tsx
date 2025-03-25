@@ -3,7 +3,12 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import PlayerDetail from "./PlayerDetail";
-import { TeamDetail } from "@/types/Types";
+import { TeamDetail, SquadPlayer } from "@/types/Types";
+
+// Extend SquadPlayer to include shirtNumber
+interface PlayerWithShirtNumber extends SquadPlayer {
+  shirtNumber?: number;
+}
 
 interface TeamSquadProps {
   team: TeamDetail | null;
@@ -18,12 +23,12 @@ export default function TeamSquad({
   error,
   displayName,
 }: TeamSquadProps) {
-  const [selectedPlayer, setSelectedPlayer] = useState<any>(null);
+  const [selectedPlayer, setSelectedPlayer] =
+    useState<PlayerWithShirtNumber | null>(null);
   const [playersByPosition, setPlayersByPosition] = useState<
-    Record<string, any[]>
+    Record<string, PlayerWithShirtNumber[]>
   >({});
   const [allPositions, setAllPositions] = useState<string[]>([]);
-  const [ungroupedPlayers, setUngroupedPlayers] = useState<any[]>([]);
   const [isProcessing, setIsProcessing] = useState<boolean>(true);
 
   // Group players by position using the custom mapping
@@ -76,7 +81,7 @@ export default function TeamSquad({
         };
 
         // Initialize positions
-        const positionGroups: Record<string, any[]> = {
+        const positionGroups: Record<string, PlayerWithShirtNumber[]> = {
           Goalkeeper: [],
           Defender: [],
           Midfielder: [],
@@ -85,7 +90,7 @@ export default function TeamSquad({
         };
 
         // Players that couldn't be categorized
-        const unassigned: any[] = [];
+        const unassigned: PlayerWithShirtNumber[] = [];
 
         // Categorize each player
         team.squad.forEach((player) => {
@@ -97,15 +102,17 @@ export default function TeamSquad({
 
           // Add to the appropriate group
           if (positionGroups[standardPosition]) {
-            positionGroups[standardPosition].push(player);
+            positionGroups[standardPosition].push(
+              player as PlayerWithShirtNumber
+            );
           } else {
-            positionGroups["Other"].push(player);
-            unassigned.push(player);
+            positionGroups["Other"].push(player as PlayerWithShirtNumber);
+            unassigned.push(player as PlayerWithShirtNumber);
           }
         });
 
         // Remove empty categories
-        const filteredPositions: Record<string, any[]> = {};
+        const filteredPositions: Record<string, PlayerWithShirtNumber[]> = {};
         const positionNames: string[] = [];
 
         Object.entries(positionGroups).forEach(([position, players]) => {
@@ -123,12 +130,13 @@ export default function TeamSquad({
         // Set state values
         setPlayersByPosition(filteredPositions);
         setAllPositions(positionNames);
-        setUngroupedPlayers(unassigned);
       } catch (err) {
         console.error("Error processing team squad data:", err);
         // If there's an error in categorization, just group everyone together
         if (team.squad.length > 0) {
-          setPlayersByPosition({ "Team Squad": team.squad });
+          setPlayersByPosition({
+            "Team Squad": team.squad as PlayerWithShirtNumber[],
+          });
           setAllPositions(["Team Squad"]);
         }
       } finally {
@@ -183,7 +191,9 @@ export default function TeamSquad({
           <button
             onClick={() => {
               // Simply group all players together
-              setPlayersByPosition({ "All Players": team.squad });
+              setPlayersByPosition({
+                "All Players": team.squad as PlayerWithShirtNumber[],
+              });
               setAllPositions(["All Players"]);
             }}
             className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
